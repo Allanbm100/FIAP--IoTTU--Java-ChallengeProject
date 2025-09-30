@@ -49,7 +49,7 @@ CREATE TABLE TB_TAG (
 );
 
 CREATE TABLE TB_MOTO_TAG (
-    id_moto_tag SERIAL PRIMARY KEY,
+    id_moto INTEGER NOT NULL,
     id_tag INTEGER NOT NULL,
-    id_moto INTEGER NOT NULL
+    PRIMARY KEY (id_moto, id_tag)
 );
