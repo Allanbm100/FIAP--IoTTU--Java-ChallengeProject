@@ -1,6 +1,6 @@
-package br.com.fiap.iottu.antena;
+package br.com.fiap.iottu.antenna;
 
-import br.com.fiap.iottu.patio.Patio;
+import br.com.fiap.iottu.yard.Yard;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "TB_ANTENA")
-public class Antena {
+public class Antenna {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +17,10 @@ public class Antena {
 
     @ManyToOne
     @JoinColumn(name = "id_patio")
-    private Patio patio;
+    private Yard yard;
 
     @Column(name = "codigo_antena")
-    private String codigo;
+    private String code;
 
     @Column(name = "latitude_antena", precision = 10, scale = 6)
     private BigDecimal latitude;

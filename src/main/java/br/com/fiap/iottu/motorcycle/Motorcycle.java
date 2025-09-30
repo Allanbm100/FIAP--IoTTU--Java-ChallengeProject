@@ -1,7 +1,7 @@
-package br.com.fiap.iottu.moto;
+package br.com.fiap.iottu.motorcycle;
 
-import br.com.fiap.iottu.patio.Patio;
-import br.com.fiap.iottu.statusmoto.StatusMoto;
+import br.com.fiap.iottu.yard.Yard;
+import br.com.fiap.iottu.motorcyclestatus.MotorcycleStatus;
 import br.com.fiap.iottu.tag.Tag;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "TB_MOTO")
-public class Moto {
+public class Motorcycle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,23 +20,23 @@ public class Moto {
 
     @ManyToOne
     @JoinColumn(name = "id_status")
-    private StatusMoto status;
+    private MotorcycleStatus status;
 
     @ManyToOne
     @JoinColumn(name = "id_patio")
-    private Patio patio;
+    private Yard yard;
 
     @Column(name = "placa_moto")
-    private String placa;
+    private String licensePlate;
 
     @Column(name = "chassi_moto")
     private String chassi;
 
     @Column(name = "nr_motor_moto")
-    private String numeroMotor;
+    private String engineNumber;
 
     @Column(name = "modelo_moto")
-    private String modelo;
+    private String model;
 
     @ManyToMany
     @JoinTable(

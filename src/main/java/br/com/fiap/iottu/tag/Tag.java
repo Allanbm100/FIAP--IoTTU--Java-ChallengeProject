@@ -1,6 +1,6 @@
 package br.com.fiap.iottu.tag;
 
-import br.com.fiap.iottu.moto.Moto;
+import br.com.fiap.iottu.motorcycle.Motorcycle;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -18,10 +18,10 @@ public class Tag {
     private Integer id;
 
     @Column(name = "codigo_rfid_tag")
-    private String codigoRfid;
+    private String rfidCode;
 
     @Column(name = "ssid_wifi_tag")
-    private String ssidWifi;
+    private String wifiSsid;
 
     @Column(name = "latitude_tag", precision = 10, scale = 6)
     private BigDecimal latitude;
@@ -30,8 +30,8 @@ public class Tag {
     private BigDecimal longitude;
 
     @Column(name = "data_hora_tag")
-    private LocalDateTime dataHora;
+    private LocalDateTime timestamp;
 
     @ManyToMany(mappedBy = "tags")
-    private List<Moto> motos;
+    private List<Motorcycle> motorcycles;
 }

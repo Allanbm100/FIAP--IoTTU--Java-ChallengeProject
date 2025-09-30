@@ -1,4 +1,4 @@
-package br.com.fiap.iottu.statusmoto;
+package br.com.fiap.iottu.motorcyclestatus;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "TB_STATUS_MOTO")
-public class StatusMoto {
+public class MotorcycleStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,5 +14,5 @@ public class StatusMoto {
     private Integer id;
 
     @Column(name = "descricao_status")
-    private String descricao;
+    private String description;
 }

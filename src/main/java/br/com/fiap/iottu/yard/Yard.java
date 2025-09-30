@@ -1,4 +1,4 @@
-package br.com.fiap.iottu.patio;
+package br.com.fiap.iottu.yard;
 
 import br.com.fiap.iottu.user.User;
 import jakarta.persistence.*;
@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "TB_PATIO")
-public class Patio {
+public class Yard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,20 +16,20 @@ public class Patio {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    private User usuario;
+    private User user;
 
     @Column(name = "cep_patio")
-    private String cep;
+    private String zipCode;
 
     @Column(name = "numero_patio")
-    private String numero;
+    private String number;
 
     @Column(name = "cidade_patio")
-    private String cidade;
+    private String city;
 
     @Column(name = "estado_patio")
-    private String estado;
+    private String state;
 
     @Column(name = "capacidade_patio")
-    private Integer capacidade;
+    private Integer capacity;
 }
