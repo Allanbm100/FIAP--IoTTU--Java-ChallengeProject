@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">IoTTU</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">IoTTU</div>
+        <nav class="nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/motorcycles}">Motos</a>
+            <a th:href="@{/yards}">Pátios</a>
+            <a th:href="@{/antennas}">Antenas</a>
+            <a th:href="@{/tags}">Tags</a>
+            <a th:href="@{/users}">Usuários</a>
+            <a th:href="@{/motorcycle-status}">Status</a>
+            <a th:href="@{/login}">Login</a>
+        </nav>
+    </header>
+
+    <main class="main-content" layout:fragment="content">
+        <!-- O conteúdo de cada página será inserido aqui -->
+    </main>
+
+</body>
+</html>
