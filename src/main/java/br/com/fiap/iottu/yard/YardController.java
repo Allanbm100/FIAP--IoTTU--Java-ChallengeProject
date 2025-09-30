@@ -22,6 +22,12 @@ public class YardController {
         return "yard/list";
     }
 
+    @GetMapping("/{id}")
+    public String showYardProfile(@PathVariable Integer id, Model model) {
+        model.addAttribute("yard", service.findById(id).orElseThrow());
+        return "yard/profile";
+    }
+
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("yard", new Yard());
@@ -30,7 +36,7 @@ public class YardController {
     }
 
     @PostMapping
-    public String saveYard(@ModelAttribute Yard yard) {
+    public String create(@ModelAttribute Yard yard) {
         service.save(yard);
         return "redirect:/yards";
     }
@@ -42,10 +48,16 @@ public class YardController {
         return "yard/form";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteYard(@PathVariable Integer id) {
-        service.deleteById(id);
+    @PutMapping("/{id}")
+    public String update(@PathVariable Integer id, @ModelAttribute Yard yard) {
+        yard.setId(id);
+        service.save(yard);
         return "redirect:/yards";
     }
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id) {
+        service.deleteById(id);
+        return "redirect:/yards";
+    }
 }

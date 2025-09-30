@@ -25,7 +25,7 @@ public class TagController {
     }
 
     @PostMapping
-    public String saveTag(@ModelAttribute Tag tag) {
+    public String create(@ModelAttribute Tag tag) {
         service.save(tag);
         return "redirect:/tags";
     }
@@ -36,10 +36,16 @@ public class TagController {
         return "tag/form";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteTag(@PathVariable Integer id) {
-        service.deleteById(id);
+    @PutMapping("/{id}")
+    public String update(@PathVariable Integer id, @ModelAttribute Tag tag) {
+        tag.setId(id);
+        service.save(tag);
         return "redirect:/tags";
     }
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id) {
+        service.deleteById(id);
+        return "redirect:/tags";
+    }
 }

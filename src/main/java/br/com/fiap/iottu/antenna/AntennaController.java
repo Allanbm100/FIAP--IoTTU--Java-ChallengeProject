@@ -30,7 +30,7 @@ public class AntennaController {
     }
 
     @PostMapping
-    public String saveAntenna(@ModelAttribute Antenna antenna) {
+    public String create(@ModelAttribute Antenna antenna) {
         service.save(antenna);
         return "redirect:/antennas";
     }
@@ -42,10 +42,16 @@ public class AntennaController {
         return "antenna/form";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteAntenna(@PathVariable Integer id) {
-        service.deleteById(id);
+    @PutMapping("/{id}")
+    public String update(@PathVariable Integer id, @ModelAttribute Antenna antenna) {
+        antenna.setId(id);
+        service.save(antenna);
         return "redirect:/antennas";
     }
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id) {
+        service.deleteById(id);
+        return "redirect:/antennas";
+    }
 }

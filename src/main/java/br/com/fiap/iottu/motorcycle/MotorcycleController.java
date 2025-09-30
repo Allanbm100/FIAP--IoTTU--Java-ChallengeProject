@@ -39,7 +39,7 @@ public class MotorcycleController {
     }
 
     @PostMapping
-    public String saveMotorcycle(@ModelAttribute Motorcycle motorcycle) {
+    public String create(@ModelAttribute Motorcycle motorcycle) {
         service.save(motorcycle);
         return "redirect:/motorcycles";
     }
@@ -51,10 +51,16 @@ public class MotorcycleController {
         return "motorcycle/form";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteMotorcycle(@PathVariable Integer id) {
-        service.deleteById(id);
+    @PutMapping("/{id}")
+    public String update(@PathVariable Integer id, @ModelAttribute Motorcycle motorcycle) {
+        motorcycle.setId(id);
+        service.save(motorcycle);
         return "redirect:/motorcycles";
     }
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Integer id) {
+        service.deleteById(id);
+        return "redirect:/motorcycles";
+    }
 }
