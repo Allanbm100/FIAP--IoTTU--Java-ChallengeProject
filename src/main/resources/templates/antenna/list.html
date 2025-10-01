@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Lista de Antenas</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <h1>Gerenciamento de Antenas</h1>
+        <a th:href="@{/antennas/new}" class="btn btn-primary">Nova Antena</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Pátio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="antenna : ${antennas}">
+                    <td th:text="${antenna.id}"></td>
+                    <td th:text="${antenna.code}"></td>
+                    <td th:text="${antenna.latitude}"></td>
+                    <td th:text="${antenna.longitude}"></td>
+                    <td th:text="${antenna.yard.city} + ' (ID: ' + ${antenna.yard.id} + ')'"></td>
+                    <td>
+                        <a th:href="@{/antennas/edit/{id}(id=${antenna.id})}" class="btn btn-secondary">Editar</a>
+                        <form th:action="@{/antennas/{id}(id=${antenna.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="delete" />
+                            <button type="submit" class="btn btn-secondary" onclick="return confirm('Tem certeza que deseja excluir esta antena?');">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

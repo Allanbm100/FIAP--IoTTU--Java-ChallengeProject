@@ -15,16 +15,53 @@
             <a th:href="@{/motorcycles}">Motos</a>
             <a th:href="@{/yards}">Pátios</a>
             <a th:href="@{/antennas}">Antenas</a>
-            <a th:href="@{/tags}">Tags</a>
             <a th:href="@{/users}">Usuários</a>
-            <a th:href="@{/motorcycle-status}">Status</a>
+            <a th:href="@{/tags}">Tags</a>
             <a th:href="@{/login}">Login</a>
         </nav>
     </header>
 
-    <main class="main-content" layout:fragment="content">
-        <!-- O conteúdo de cada página será inserido aqui -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div layout:fragment="content">
+            </div>
+        </div>
     </main>
+
+    <!-- Contêiner para mensagens de notificação -->
+    <div id="notification-container"></div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notificationContainer = document.getElementById('notification-container');
+
+                function showNotification(message, type) {
+                    const notification = document.createElement('div');
+                    notification.classList.add('notification', type);
+                    notification.textContent = message;
+                    notificationContainer.appendChild(notification);
+
+                    setTimeout(() => {
+                        notification.classList.add('fade-out');
+                        notification.addEventListener('animationend', () => {
+                            notification.remove();
+                        });
+                    }, 3000);
+                }
+
+                const successMessage = '[[${successMessage}]]';
+                const failureMessage = '[[${failureMessage}]]';
+
+                if (successMessage && successMessage.trim() !== '') {
+                    showNotification(successMessage, 'success');
+                }
+                if (failureMessage && failureMessage.trim() !== '') {
+                    showNotification(failureMessage, 'failure');
+                }
+            });
+        </script>
+    </th:block>
 
 </body>
 </html>

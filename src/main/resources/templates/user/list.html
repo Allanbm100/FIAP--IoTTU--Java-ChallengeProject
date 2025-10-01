@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Lista de Usuários</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <h1>Gerenciamento de Usuários</h1>
+        <a th:href="@{/users/new}" class="btn btn-primary">Novo Usuário</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Perfil</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td>
+                        <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary">Perfil</a>
+                        <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-secondary">Editar</a>
+                        <a th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-secondary">Excluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

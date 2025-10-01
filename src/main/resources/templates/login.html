@@ -10,12 +10,10 @@
     <div class="form-container">
         <h2>Acessar o Sistema</h2>
 
-        <!-- Mensagem de logout -->
         <div th:if="${param.logout}" class="alert alert-success">
             Você foi desconectado com sucesso.
         </div>
 
-        <!-- Mensagem de erro (para quando o Spring Security for adicionado) -->
         <div th:if="${param.error}" class="alert alert-danger">
             Email ou senha inválidos.
         </div>

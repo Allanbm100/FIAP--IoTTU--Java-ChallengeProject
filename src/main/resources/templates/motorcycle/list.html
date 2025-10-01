@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Lista de Motos</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <h1>Gerenciamento de Motos</h1>
+        <a th:href="@{/motorcycles/new}" class="btn btn-primary">Nova Moto</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Modelo</th>
+                    <th>Placa</th>
+                    <th>Status</th>
+                    <th>Pátio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="motorcycle : ${motorcycles}">
+                    <td th:text="${motorcycle.id}"></td>
+                    <td th:text="${motorcycle.model}"></td>
+                    <td th:text="${motorcycle.licensePlate}"></td>
+                    <td th:text="${motorcycle.status.description}"></td>
+                    <td th:text="${motorcycle.yard.city}"></td>
+                    <td>
+                        <a th:href="@{/motorcycles/edit/{id}(id=${motorcycle.id})}" class="btn btn-secondary">Editar</a>
+                        <form th:action="@{/motorcycles/{id}(id=${motorcycle.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="delete" />
+                            <button type="submit" class="btn btn-secondary" onclick="return confirm('Tem certeza que deseja excluir esta moto?');">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
