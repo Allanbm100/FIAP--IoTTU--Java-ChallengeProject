@@ -14,13 +14,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/css/**", "/images/**", "/js/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/login", "/register", "/css/**", "/images/**", "/js/**").permitAll()
                         .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
+                .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/oauth2/callback", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

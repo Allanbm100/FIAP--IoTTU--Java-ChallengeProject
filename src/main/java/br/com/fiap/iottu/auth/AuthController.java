@@ -1,13 +1,25 @@
 package br.com.fiap.iottu.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import br.com.fiap.iottu.user.User;
+import br.com.fiap.iottu.user.UserService;
 
 @Controller
 public class AuthController {
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/login")
     public String loginPage(Authentication authentication, Model model, @RequestParam(value = "logout", required = false) String logout) {
@@ -22,4 +34,33 @@ public class AuthController {
         return "login";
     }
 
+    @GetMapping("/register")
+    public String registerPage(Model model) {
+        model.addAttribute("user", new User());
+        return "auth/register";
+    }
+
+    @PostMapping("/register")
+    public String register(@Validated @ModelAttribute("user") User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "auth/register";
+        }
+
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
+            bindingResult.rejectValue("email", "error.user", "Este e-mail já está em uso.");
+            return "auth/register";
+        }
+
+        // Se for o primeiro usuário, define como ADMIN
+        if (userService.count() == 0) {
+            user.setRole("ADMIN");
+        } else {
+            user.setRole("USER");
+        }
+        
+        userService.save(user);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Cadastro realizado com sucesso! Faça o login.");
+        return "redirect:/login";
+    }
 }

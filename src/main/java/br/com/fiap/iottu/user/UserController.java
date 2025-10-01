@@ -1,10 +1,11 @@
 package br.com.fiap.iottu.user;
 
-import jakarta.validation.Valid;
+import br.com.fiap.iottu.validation.OnUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -27,23 +28,6 @@ public class UserController {
         return "user/profile";
     }
 
-    @GetMapping("/new")
-    public String formForCreate(Model model) {
-        model.addAttribute("user", new User());
-        return "user/form";
-    }
-
-    @PostMapping
-    public String create(@Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar usuário. Verifique os campos.");
-            return "user/form";
-        }
-        service.save(user);
-        redirectAttributes.addFlashAttribute("successMessage", "Usuário cadastrado com sucesso!");
-        return "redirect:/users";
-    }
-
     @GetMapping("/edit/{id}")
     public String formForUpdate(@PathVariable Integer id, Model model) {
         model.addAttribute("user", service.findById(id).orElseThrow());
@@ -51,11 +35,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Integer id, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String update(@PathVariable Integer id, @Validated(OnUpdate.class) @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar usuário. Verifique os campos.");
             return "user/form";
         }
+
+        // Preserva a senha existente
+        User existingUser = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário inválido: " + id));
+        user.setPassword(existingUser.getPassword());
+
         user.setId(id);
         service.save(user);
         redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
@@ -66,6 +55,15 @@ public class UserController {
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Usuário excluído com sucesso!");
+        return "redirect:/users";
+    }
+
+    @PostMapping("/{id}/promote")
+    public String promoteToAdmin(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        User user = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário inválido: " + id));
+        user.setRole("ADMIN");
+        service.save(user);
+        redirectAttributes.addFlashAttribute("successMessage", "Usuário promovido a ADMIN com sucesso!");
         return "redirect:/users";
     }
 }

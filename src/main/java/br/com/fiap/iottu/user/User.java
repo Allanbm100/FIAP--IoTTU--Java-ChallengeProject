@@ -1,8 +1,10 @@
 package br.com.fiap.iottu.user;
 
+import br.com.fiap.iottu.validation.OnUpdate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -14,6 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
+    @NotNull(groups = OnUpdate.class, message = "O ID do usuário é obrigatório na atualização.")
     private Integer id;
 
     @NotBlank(message = "O nome não pode estar vazio.")
@@ -32,7 +35,7 @@ public class User {
     @Column(name = "senha_usuario")
     private String password;
 
-    @NotBlank(message = "O perfil não pode estar vazio.")
+    @NotBlank(message = "O perfil não pode estar vazio.", groups = OnUpdate.class)
     @Column(name = "role")
     private String role;
 

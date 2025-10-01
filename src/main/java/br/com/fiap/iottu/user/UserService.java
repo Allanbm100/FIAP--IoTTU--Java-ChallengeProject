@@ -1,6 +1,9 @@
 package br.com.fiap.iottu.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,13 +16,26 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + username));
+
+        return org.springframework.security.core.userdetails.User
+                .builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+    }
 
     public List<User> findAll() {
         return repository.findAll();
@@ -34,7 +50,8 @@ public class UserService {
     }
 
     public void save(User user) {
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+        // Apenas codifica a senha se ela foi fornecida e não parece já estar codificada
+        if (user.getPassword() != null && !user.getPassword().isEmpty() && !user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         repository.save(user);
@@ -42,6 +59,10 @@ public class UserService {
 
     public void deleteById(Integer id) {
         repository.deleteById(id);
+    }
+
+    public long count() {
+        return repository.count();
     }
 
     public Map.Entry<User, Boolean> registerOAuth2User(OAuth2User oauth2User) {
