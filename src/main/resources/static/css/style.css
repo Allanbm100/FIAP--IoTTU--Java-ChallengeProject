@@ -1,14 +1,18 @@
-
-/* --- Variáveis de Cor --- */
 :root {
     --background-color: #1A1A1A;
     --primary-color: #00FF99;
     --text-color: #E0E0E0;
     --container-bg: #2C2C2C;
     --border-color: #444;
+    --shadow-color: rgba(0, 255, 153, 0.1);
+    --success-color: #28a745;
+    --failure-color: #dc3545;
 }
 
-/* --- Estilos Globais --- */
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-color: var(--background-color);
     color: var(--text-color);
@@ -27,7 +31,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* --- Cabeçalho e Navegação --- */
 .header {
     background-color: var(--container-bg);
     padding: 1rem 2rem;
@@ -35,6 +38,9 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .header .logo {
@@ -49,54 +55,102 @@ a:hover {
     font-weight: 500;
 }
 
-/* --- Conteúdo Principal --- */
 .main-content {
     padding: 2rem;
 }
 
-h1, h2, h3 {
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    margin-bottom: 1rem;
+}
+
+.home-container {
+    text-align: center;
+    min-height: calc(100vh - 150px);
+}
+
+.form-container {
+    background-color: var(--container-bg);
+    padding: 2.5rem 3rem;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 2rem auto;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 15px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2.5rem;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
     color: var(--primary-color);
 }
 
-/* --- Formulários --- */
-.form-container {
-    background-color: var(--container-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 2rem auto;
-}
-
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #ccc;
+    font-size: 1.1rem;
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 0.75rem;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background-color: #333;
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    background-color: #222;
     color: var(--text-color);
     font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* --- Botões --- */
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--shadow-color);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+}
+
+.form-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
 .btn {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
+    padding: 0.75rem 1.2rem;
+    border-radius: 6px;
     font-weight: bold;
     text-align: center;
     cursor: pointer;
     border: 2px solid transparent;
+    transition: all 0.3s ease;
+    margin: 0 0.2rem;
+    text-transform: none;
+    font-family: inherit;
+    line-height: normal;
 }
 
 .btn-primary {
@@ -104,26 +158,132 @@ h1, h2, h3 {
     color: var(--background-color);
 }
 
+.btn-primary:hover {
+    background-color: #00e68a;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
 .btn-secondary {
     background-color: transparent;
     color: var(--primary-color);
     border-color: var(--primary-color);
+    font-size: 16px;
 }
 
-/* --- Tabelas --- */
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.table-container {
+    background-color: var(--container-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 1200px;
+    overflow-x: auto;
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 2rem;
 }
 
 .table th, .table td {
     padding: 1rem;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid var(--border-color);
 }
 
 .table th {
-    background-color: var(--container-bg);
     color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.table tbody tr:hover {
+    background-color: #333;
+}
+
+.form-group.password-group {
+    position: relative;
+}
+
+.form-group.password-group input {
+    padding-right: 3.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 45px;
+    right: 1rem;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    z-index: 10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300FF99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'%3e%3c/path%3e%3cline x1='1' y1='1' x2='23' y2='23'%3e%3c/line%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.2s ease-in-out;
+}
+
+.password-toggle.visible {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300FF99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3e%3c/path%3e%3ccircle cx='12' cy='12' r='3'%3e%3c/circle%3e%3c/svg%3e");
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.is-invalid {
+    border-color: #ff4d4d !important;
+}
+
+#notification-container {
+    position: fixed;
+    top: 6rem;
+    right: 1rem;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 300px;
+}
+
+.notification {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.notification.success {
+    background-color: var(--success-color);
+    border: 1px solid #218838;
+}
+
+.notification.failure {
+    background-color: var(--failure-color);
+    border: 1px solid #c82333;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.notification.fade-out {
+    animation: fadeOut 0.5s forwards;
 }
