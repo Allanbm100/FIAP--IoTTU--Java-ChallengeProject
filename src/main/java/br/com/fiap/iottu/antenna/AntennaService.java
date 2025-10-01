@@ -20,6 +20,10 @@ public class AntennaService {
         return repository.findById(id);
     }
 
+    public List<Antenna> findByYardId(Integer yardId) {
+        return repository.findByYardId(yardId);
+    }
+
     public void save(Antenna antenna) {
         repository.save(antenna);
     }

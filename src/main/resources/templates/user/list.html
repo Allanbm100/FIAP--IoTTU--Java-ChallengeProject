@@ -31,12 +31,10 @@
                         <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-secondary btn-small">Perfil</a>
                         <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-secondary btn-small">Editar</a>
                         
-                        <!-- Botão de Excluir como um formulário POST -->
                         <form th:action="@{/users/{id}(id=${user.id})}" th:method="delete" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
                             <button type="submit" class="btn btn-secondary">Excluir</button>
                         </form>
 
-                        <!-- Botão de Promover como um formulário POST -->
                         <form th:if="${user.role == 'USER'}" th:action="@{/users/{id}/promote(id=${user.id})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-secondary">Promover a Admin</button>
                         </form>

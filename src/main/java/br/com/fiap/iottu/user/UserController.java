@@ -41,7 +41,6 @@ public class UserController {
             return "user/form";
         }
 
-        // Preserva a senha existente
         User existingUser = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário inválido: " + id));
         user.setPassword(existingUser.getPassword());
 

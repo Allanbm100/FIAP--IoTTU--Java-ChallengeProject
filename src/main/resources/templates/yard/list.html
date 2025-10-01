@@ -30,9 +30,10 @@
                     <td th:text="${yard.state}"></td>
                     <td th:text="${yard.capacity}"></td>
                     <td th:text="${yard.user.name}"></td>
-                    <td>
-                        <a th:href="@{/yards/{id}(id=${yard.id})}" class="btn btn-secondary">Perfil</a>
-                        <a th:href="@{/yards/edit/{id}(id=${yard.id})}" class="btn btn-secondary">Editar</a>
+                    <td class="actions">
+                        <a th:href="@{/yards/{id}/map(id=${yard.id})}" class="btn btn-info btn-small">Ver Mapa</a>
+                        <a th:href="@{/yards/{id}(id=${yard.id})}" class="btn btn-secondary btn-small">Perfil</a>
+                        <a th:href="@{/yards/edit/{id}(id=${yard.id})}" class="btn btn-secondary btn-small">Editar</a>
                         <form th:action="@{/yards/{id}(id=${yard.id})}" method="post" style="display:inline;">
                             <input type="hidden" name="_method" value="delete" />
                             <button type="submit" class="btn btn-secondary" onclick="return confirm('Tem certeza que deseja excluir este pátio?');">Excluir</button>

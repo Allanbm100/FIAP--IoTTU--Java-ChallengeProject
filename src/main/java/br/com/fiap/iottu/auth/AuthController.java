@@ -51,7 +51,6 @@ public class AuthController {
             return "auth/register";
         }
 
-        // Se for o primeiro usuário, define como ADMIN
         if (userService.count() == 0) {
             user.setRole("ADMIN");
         } else {

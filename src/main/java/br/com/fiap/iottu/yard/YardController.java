@@ -1,6 +1,9 @@
 package br.com.fiap.iottu.yard;
 
-import br.com.fiap.iottu.user.User;
+import br.com.fiap.iottu.antenna.Antenna;
+import br.com.fiap.iottu.antenna.AntennaService;
+import br.com.fiap.iottu.motorcycle.Motorcycle;
+import br.com.fiap.iottu.motorcycle.MotorcycleService;
 import br.com.fiap.iottu.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Optional;
+import java.util.List;
 
 @Controller
 @RequestMapping("/yards")
@@ -22,26 +25,24 @@ public class YardController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AntennaService antennaService;
+
+    @Autowired
+    private MotorcycleService motorcycleService;
+
+    @Autowired
+    private YardMapService yardMapService;
+
     @GetMapping
     public String listYards(Model model) {
         model.addAttribute("yards", service.findAll());
         return "yard/list";
     }
 
-    @GetMapping("/{id}")
-    public String showYardProfile(@PathVariable Integer id, Model model) {
-        model.addAttribute("yard", service.findById(id).orElseThrow());
-        return "yard/profile";
-    }
-
     @GetMapping("/new")
-    public String showCreateForm(Model model, @RequestParam(required = false) String oauth2UserEmail) {
-        Yard yard = new Yard();
-        if (oauth2UserEmail != null && !oauth2UserEmail.isEmpty()) {
-            Optional<User> userOptional = userService.findByEmail(oauth2UserEmail);
-            userOptional.ifPresent(yard::setUser);
-        }
-        model.addAttribute("yard", yard);
+    public String showCreateForm(Model model) {
+        model.addAttribute("yard", new Yard());
         model.addAttribute("users", userService.findAll());
         return "yard/form";
     }
@@ -83,5 +84,19 @@ public class YardController {
         service.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Pátio excluído com sucesso!");
         return "redirect:/yards";
+    }
+
+    @GetMapping("/{id}/map")
+    public String showYardMap(@PathVariable Integer id, Model model) {
+        Yard yard = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Pátio inválido: " + id));
+        List<Antenna> antennas = antennaService.findByYardId(id);
+        List<Motorcycle> motorcycles = motorcycleService.findByYardId(id);
+
+        YardMapDTO mapData = yardMapService.createMap(antennas, motorcycles);
+
+        model.addAttribute("yard", yard);
+        model.addAttribute("mapData", mapData);
+
+        return "yard/map";
     }
 }

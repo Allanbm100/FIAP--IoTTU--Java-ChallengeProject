@@ -26,7 +26,6 @@
                 <span th:errors="*{email}" class="error-message" th:if="${#fields.hasErrors('email')}"></span>
             </div>
 
-            <!-- Campo de senha visível apenas na criação de um novo usuário -->
             <div class="form-group password-group" th:if="${user.id == null}">
                 <label for="password">Senha</label>
                 <input type="password" id="password" th:field="*{password}" th:errorclass="is-invalid" required>
@@ -62,7 +61,7 @@
                     this.classList.toggle('visible');
                     const targetId = this.getAttribute('data-target');
                     const targetInput = document.getElementById(targetId);
-                    if (targetInput) { // Verifica se o campo de senha existe na página
+                    if (targetInput) {
                         targetInput.type = targetInput.type === 'password' ? 'text' : 'password';
                     }
                 });

@@ -20,6 +20,10 @@ public class MotorcycleService {
         return repository.findById(id);
     }
 
+    public List<Motorcycle> findByYardId(Integer yardId) {
+        return repository.findByYardId(yardId);
+    }
+
     public void save(Motorcycle motorcycle) {
         repository.save(motorcycle);
     }

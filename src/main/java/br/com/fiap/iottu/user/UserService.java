@@ -50,7 +50,6 @@ public class UserService implements UserDetailsService {
     }
 
     public void save(User user) {
-        // Apenas codifica a senha se ela foi fornecida e não parece já estar codificada
         if (user.getPassword() != null && !user.getPassword().isEmpty() && !user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
@@ -106,7 +105,7 @@ public class UserService implements UserDetailsService {
         } else {
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setName(finalName); 
+            newUser.setName(finalName);
             newUser.setRole("USER");
             newUser.setPassword(passwordEncoder.encode("oauth2_dummy_password"));
             repository.save(newUser);

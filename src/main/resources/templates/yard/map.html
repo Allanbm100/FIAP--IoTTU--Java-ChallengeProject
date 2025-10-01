@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Mapa do Pátio</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <h1 th:text="'Mapa do Pátio: ' + ${yard.city}"></h1>
+        <a th:href="@{/yards}" class="btn btn-secondary">Voltar para a Lista</a>
+    </div>
+
+    <div th:if="${mapData.outOfBoundsMotorcycles != null && !mapData.outOfBoundsMotorcycles.isEmpty()}" class="alert alert-danger" style="margin: 20px auto; max-width: 800px;">
+        <h4>Atenção: Motos Fora dos Limites do Pátio</h4>
+        <p>As seguintes motos estão reportando uma localização fora da área delimitada pelas antenas:</p>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Modelo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="moto : ${mapData.outOfBoundsMotorcycles}">
+                    <td th:text="${moto.licensePlate}"></td>
+                    <td th:text="${moto.model}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="yard-map-container">
+        <div class="yard-map"
+             th:if="${mapData.mapWidth > 0}"
+             th:style="'width:' + ${mapData.mapWidth} + 'px; height:' + ${mapData.mapHeight} + 'px;'">
+
+            <div th:each="drawable : ${mapData.antennas}"
+                 class="antenna"
+                 th:attr="data-label=${drawable.antenna.code}"
+                 th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
+            </div>
+
+            <div th:each="drawable : ${mapData.motorcycles}"
+                 class="motorcycle"
+                 th:attr="data-label=${drawable.motorcycle.licensePlate}"
+                 th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
+            </div>
+
+        </div>
+        <div th:if="${mapData.mapWidth == 0}" class="alert alert-warning">
+            Não há antenas com coordenadas definidas para este pátio para desenhar o mapa.
+        </div>
+    </div>
+
+    <div class="info-panel" style="text-align: center; margin-top: 20px;">
+        <h3>Legenda</h3>
+        <p style="display: inline-block; margin-right: 20px;"><span style="color: #007bff;">&#9679;</span> Antena</p>
+        <p style="display: inline-block;"><span style="color: #dc3545;">&#9632;</span> Moto</p>
+    </div>
+
+</div>
+
+</body>
+</html>
