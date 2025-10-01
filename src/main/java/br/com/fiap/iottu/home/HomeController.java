@@ -10,14 +10,4 @@ public class HomeController {
     public String home() {
         return "home";
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @GetMapping("/logout")
-    public String logout() {
-        return "redirect:/login?logout";
-    }
 }

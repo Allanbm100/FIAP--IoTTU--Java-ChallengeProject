@@ -49,10 +49,32 @@ a:hover {
     color: var(--primary-color);
 }
 
-.nav a {
-    margin-left: 1.5rem;
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav > a {
     font-size: 1rem;
     font-weight: 500;
+    color: var(--text-color);
+}
+
+.nav > a:hover {
+    color: var(--primary-color);
+}
+
+.nav-auth {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
 }
 
 .main-content {

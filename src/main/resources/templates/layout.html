@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,9 +15,21 @@
             <a th:href="@{/motorcycles}">Motos</a>
             <a th:href="@{/yards}">Pátios</a>
             <a th:href="@{/antennas}">Antenas</a>
-            <a th:href="@{/users}">Usuários</a>
             <a th:href="@{/tags}">Tags</a>
-            <a th:href="@{/login}">Login</a>
+            
+            <a th:href="@{/users}" sec:authorize="hasRole('ADMIN')">Usuários</a>
+
+            <div class="nav-auth">
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}" class="btn btn-primary btn-small">Login</a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary btn-logout btn-small">Logout</button>
+                    </form>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -28,7 +40,6 @@
         </div>
     </main>
 
-    <!-- Contêiner para mensagens de notificação -->
     <div id="notification-container"></div>
 
     <th:block layout:fragment="scripts">

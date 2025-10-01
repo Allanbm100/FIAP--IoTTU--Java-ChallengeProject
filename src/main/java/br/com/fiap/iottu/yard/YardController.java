@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.yard;
 
+import br.com.fiap.iottu.user.User;
 import br.com.fiap.iottu.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/yards")
@@ -32,8 +35,13 @@ public class YardController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("yard", new Yard());
+    public String showCreateForm(Model model, @RequestParam(required = false) String oauth2UserEmail) {
+        Yard yard = new Yard();
+        if (oauth2UserEmail != null && !oauth2UserEmail.isEmpty()) {
+            Optional<User> userOptional = userService.findByEmail(oauth2UserEmail);
+            userOptional.ifPresent(yard::setUser);
+        }
+        model.addAttribute("yard", yard);
         model.addAttribute("users", userService.findAll());
         return "yard/form";
     }

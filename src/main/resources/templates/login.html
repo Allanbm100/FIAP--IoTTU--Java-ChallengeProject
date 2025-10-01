@@ -2,6 +2,35 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <head>
     <title>Login</title>
+    <style>
+        .oauth-login-options {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .oauth-login-options a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 5px;
+            min-width: 150px;
+        }
+        .oauth-login-options a svg {
+            margin-right: 8px;
+        }
+        .btn-github {
+            background-color: #333;
+            color: white;
+        }
+        .btn-google {
+            background-color: #fff;
+            color: #757575;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
 
@@ -10,25 +39,18 @@
     <div class="form-container">
         <h2>Acessar o Sistema</h2>
 
-        <div th:if="${param.logout}" class="alert alert-success">
-            Você foi desconectado com sucesso.
+        <div class="oauth-login-options">
+            <p>Escolha uma das opções abaixo para entrar:</p>
+            <a th:href="@{/oauth2/authorization/github}" class="btn btn-github">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387 0.599 0.111 0.819-0.262 0.819-0.58 0-0.281-0.01-1.025-0.015-2.005-3.338 0.724-4.042-1.61-4.042-1.619-0.546-1.387-1.333-1.756-1.333-1.756-1.089-0.745 0.083-0.729 0.083-0.729 1.205 0.084 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.493 0.998 0.108-0.776 0.418-1.305 0.762-1.604-2.665-0.304-5.467-1.334-5.467-5.931 0-1.311 0.469-2.381 1.236-3.221-0.124-0.303-0.535-1.524 0.117-3.176 0 0 1.008-0.322 3.301 1.23 0.957-0.266 1.983-0.399 3.003-0.399 1.02 0 2.047 0.133 3.004 0.399 2.294-1.552 3.302-1.23 3.302-1.23 0.653 1.653 0.242 2.874 0.118 3.176 0.77 0.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.923 0.43 0.372 0.817 1.105 0.817 2.226 0 1.606-0.015 2.899-0.015 3.286 0 0.315 0.217 0.695 0.825 0.578 4.766-1.586 8.203-6.084 8.203-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                GitHub
+            </a>
+            <a th:href="@{/oauth2/authorization/google}" class="btn btn-google">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                Google
+            </a>
         </div>
 
-        <div th:if="${param.error}" class="alert alert-danger">
-            Email ou senha inválidos.
-        </div>
-
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label for="username">Email</label>
-                <input type="text" id="username" name="username" required autofocus>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Entrar</button>
-        </form>
     </div>
 
 </div>

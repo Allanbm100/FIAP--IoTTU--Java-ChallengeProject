@@ -1,16 +1,25 @@
 package br.com.fiap.iottu.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<User> findAll() {
         return repository.findAll();
@@ -20,7 +29,14 @@ public class UserService {
         return repository.findById(id);
     }
 
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
     public void save(User user) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         repository.save(user);
     }
 
@@ -28,4 +44,52 @@ public class UserService {
         repository.deleteById(id);
     }
 
+    public Map.Entry<User, Boolean> registerOAuth2User(OAuth2User oauth2User) {
+        log.info("OAuth2User Attributes: {}", oauth2User.getAttributes());
+
+        String email = oauth2User.getAttribute("email");
+        String name = oauth2User.getAttribute("name");
+        String login = oauth2User.getAttribute("login");
+
+        log.info("Extracted - Email: {}, Name: {}, Login: {}", email, name, login);
+
+        if (email == null || email.trim().isEmpty()) {
+            if (login != null && !login.trim().isEmpty()) {
+                email = login + "@github.com";
+                log.info("Using fallback email: {}", email);
+            } else {
+                throw new IllegalArgumentException("Email do usuário OAuth2 não encontrado ou inválido.");
+            }
+        }
+
+        String finalName = name;
+        if (finalName == null || finalName.trim().isEmpty()) {
+            finalName = login;
+            log.info("Using fallback name (from login): {}", finalName);
+        }
+        if (finalName == null || finalName.trim().isEmpty()) {
+            finalName = email.split("@")[0];
+            log.info("Using fallback name (from email part): {}", finalName);
+        }
+        if (finalName.length() < 3) {
+            finalName = finalName + "User";
+            log.info("Adjusted name for min length: {}", finalName);
+        }
+
+        log.info("Final Email: {}, Final Name: {}", email, finalName);
+
+        Optional<User> existingUser = repository.findByEmail(email);
+
+        if (existingUser.isPresent()) {
+            return new SimpleEntry<>(existingUser.get(), false);
+        } else {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setName(finalName); 
+            newUser.setRole("USER");
+            newUser.setPassword(passwordEncoder.encode("oauth2_dummy_password"));
+            repository.save(newUser);
+            return new SimpleEntry<>(newUser, true);
+        }
+    }
 }
