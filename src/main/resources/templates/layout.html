@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html th:lang="${#locale.language + (#locale.country != null ? '-' + #locale.country : '')}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +20,11 @@
             <a th:href="@{/users}" sec:authorize="hasRole('ADMIN')">Usuários</a>
 
             <div class="nav-auth">
+                <select id="language-selector" class="language-selector" onchange="changeLanguage(this.value)">
+                    <option value="pt_BR" th:selected="${#locale.language == 'pt' and #locale.country == 'BR'}">Português</option>
+                    <option value="en" th:selected="${#locale.language == 'en'}">Inglês</option>
+                </select>
+
                 <div sec:authorize="isAnonymous()">
                     <a th:href="@{/login}" class="btn btn-primary btn-small">Login</a>
                 </div>
@@ -71,6 +76,12 @@
                     showNotification(failureMessage, 'failure');
                 }
             });
+
+            function changeLanguage(lang) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('lang', lang);
+                window.location.href = url.toString();
+            }
         </script>
     </th:block>
 
