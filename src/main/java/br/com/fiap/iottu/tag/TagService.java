@@ -28,4 +28,8 @@ public class TagService {
         repository.deleteById(id);
     }
 
+    public List<Tag> findAvailableTags() {
+        return repository.findAvailableTags();
+    }
+
 }

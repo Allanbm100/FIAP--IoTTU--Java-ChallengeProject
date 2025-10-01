@@ -1,10 +1,13 @@
 package br.com.fiap.iottu.yard;
 
 import br.com.fiap.iottu.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/yards")
@@ -36,8 +39,14 @@ public class YardController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute Yard yard) {
+    public String create(@Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userService.findAll());
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar pátio. Verifique os campos.");
+            return "yard/form";
+        }
         service.save(yard);
+        redirectAttributes.addFlashAttribute("successMessage", "Pátio cadastrado com sucesso!");
         return "redirect:/yards";
     }
 
@@ -49,15 +58,22 @@ public class YardController {
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Integer id, @ModelAttribute Yard yard) {
+    public String update(@PathVariable Integer id, @Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userService.findAll());
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar pátio. Verifique os campos.");
+            return "yard/form";
+        }
         yard.setId(id);
         service.save(yard);
+        redirectAttributes.addFlashAttribute("successMessage", "Pátio atualizado com sucesso!");
         return "redirect:/yards";
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Integer id) {
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Pátio excluído com sucesso!");
         return "redirect:/yards";
     }
 }
