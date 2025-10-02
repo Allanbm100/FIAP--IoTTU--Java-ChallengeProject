@@ -1,16 +1,27 @@
 package br.com.fiap.iottu.antenna;
 
+import br.com.fiap.iottu.dto.AntenaDataDTO;
+import br.com.fiap.iottu.yard.Yard;
+import br.com.fiap.iottu.yard.YardService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AntennaService {
 
+    private static final Logger log = LoggerFactory.getLogger(AntennaService.class);
+
     @Autowired
     private AntennaRepository repository;
+
+    @Autowired
+    private YardService yardService;
 
     public List<Antenna> findAll() {
         return repository.findAll();
@@ -32,4 +43,30 @@ public class AntennaService {
         repository.deleteById(id);
     }
 
+    public void processAntennasData(List<AntenaDataDTO> antenasData) {
+        for (AntenaDataDTO dto : antenasData) {
+            try {
+                Optional<Yard> yardOptional = yardService.findById(dto.getIdPatio());
+                if (yardOptional.isEmpty()) {
+                    log.warn("Pátio com ID {} não encontrado para a antena {}. Antena não será processada.", dto.getIdPatio(), dto.getCodigoAntena());
+                    continue;
+                }
+                Yard yard = yardOptional.get();
+
+                // Tenta encontrar a antena existente pelo código, se não existir, cria uma nova
+                Antenna antenna = repository.findByCode(dto.getCodigoAntena())
+                        .orElse(new Antenna());
+
+                antenna.setYard(yard);
+                antenna.setCode(dto.getCodigoAntena());
+                antenna.setLatitude(BigDecimal.valueOf(dto.getLatitudeAntena()));
+                antenna.setLongitude(BigDecimal.valueOf(dto.getLongitudeAntena()));
+
+                repository.save(antenna);
+                log.info("Antena {} processada e salva com sucesso.", dto.getCodigoAntena());
+            } catch (Exception e) {
+                log.error("Erro ao processar dados da antena {}: {}", dto.getCodigoAntena(), e.getMessage(), e);
+            }
+        }
+    }
 }
