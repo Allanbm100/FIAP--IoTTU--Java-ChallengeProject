@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <head>
-    <title th:text="${motorcycle.id == null} ? 'Nova Moto' : 'Editar Moto'">Formulário de Moto</title>
+    <title th:text="${motorcycle.id == null} ? 'Nova Moto' : 'Editar Moto'">Formulário de Motos</title>
 </head>
 <body>
 
@@ -54,16 +54,15 @@
                 <span th:errors="*{yard}" class="error-message" th:if="${#fields.hasErrors('yard')}"></span>
             </div>
 
-            <!-- Campo para seleção de Tag - AGORA USANDO selectedTagId -->
             <div class="form-group">
-                <label for="tag">Tag</label>
+                <label for="tag">Etiqueta</label>
                 <select id="tag" th:field="*{selectedTagId}" th:errorclass="is-invalid" required>
-                    <option value="">-- Selecione uma Tag --</option>
+                    <option value="">-- Selecione uma Etiqueta --</option>
                     <option th:each="tag : ${availableTags}" th:value="${tag.id}" th:text="${tag.rfidCode}"></option>
                 </select>
                 <span th:errors="*{selectedTagId}" class="error-message" th:if="${#fields.hasErrors('selectedTagId')}"></span>
                 <small class="form-text text-muted">
-                    Não encontrou a tag? <a th:href="@{/tags/new(redirectUrl=${motorcycle.id == null ? '/motorcycles/new' : '/motorcycles/edit/' + motorcycle.id})}" class="btn btn-secondary btn-sm">Criar Tag</a>
+                    Não encontrou a Etiqueta? <a th:href="@{/tags/new(redirectUrl=${motorcycle.id == null ? '/motorcycles/new' : '/motorcycles/edit/' + motorcycle.id})}" class="btn btn-secondary btn-sm">Criar Etiqueta</a>
                 </small>
             </div>
 

@@ -15,23 +15,23 @@
             <a th:href="@{/motorcycles}">Motos</a>
             <a th:href="@{/yards}">Pátios</a>
             <a th:href="@{/antennas}">Antenas</a>
-            <a th:href="@{/tags}">Tags</a>
+            <a th:href="@{/tags}">Etiquetas</a>
             
             <a th:href="@{/users}" sec:authorize="hasRole('ADMIN')">Usuários</a>
 
             <div class="nav-auth">
-                <select id="language-selector" class="language-selector" onchange="changeLanguage(this.value)">
-                    <option value="pt_BR" th:selected="${#locale.language == 'pt' and #locale.country == 'BR'}">Português</option>
-                    <option value="en" th:selected="${#locale.language == 'en'}">Inglês</option>
-                </select>
+                <ul id="language-selector" class="language-selector">
+                    <li><a href="?lang=pt_BR">Português</a></li>
+                    <li><a href="?lang=en_US">Inglês</a></li>
+                </ul>
 
                 <div sec:authorize="isAnonymous()">
-                    <a th:href="@{/login}" class="btn btn-primary btn-small">Login</a>
+                    <a th:href="@{/login}" class="btn btn-primary btn-small">Entrar</a>
                 </div>
 
                 <div sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-secondary btn-logout btn-small">Logout</button>
+                        <button type="submit" class="btn btn-secondary btn-logout btn-small">Desconectar</button>
                     </form>
                 </div>
             </div>
@@ -46,8 +46,6 @@
     </main>
 
     <div id="notification-container"></div>
-
-    <th:block layout:fragment="scripts">
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const notificationContainer = document.getElementById('notification-container');
@@ -76,14 +74,6 @@
                     showNotification(failureMessage, 'failure');
                 }
             });
-
-            function changeLanguage(lang) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('lang', lang);
-                window.location.href = url.toString();
-            }
         </script>
-    </th:block>
-
 </body>
 </html>

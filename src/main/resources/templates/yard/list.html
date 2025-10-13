@@ -31,8 +31,7 @@
                     <td th:text="${yard.capacity}"></td>
                     <td th:text="${yard.user.name}"></td>
                     <td class="actions">
-                        <a th:href="@{/yards/{id}/map(id=${yard.id})}" class="btn btn-info btn-small">Ver Mapa</a>
-                        <a th:href="@{/yards/{id}(id=${yard.id})}" class="btn btn-secondary btn-small">Perfil</a>
+                        <a th:href="@{/yards/{id}/map(id=${yard.id})}" class="btn btn-secondary btn-small">Ver Mapa</a>
                         <a th:href="@{/yards/edit/{id}(id=${yard.id})}" class="btn btn-secondary btn-small">Editar</a>
                         <form th:action="@{/yards/{id}(id=${yard.id})}" method="post" style="display:inline;">
                             <input type="hidden" name="_method" value="delete" />
@@ -43,8 +42,6 @@
             </tbody>
         </table>
     </div>
-
 </div>
-
 </body>
 </html>
