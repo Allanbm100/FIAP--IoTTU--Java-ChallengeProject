@@ -41,9 +41,9 @@ public class UserController {
         }
         try {
             service.updateWithPasswordPreservation(id, user);
-            redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
+            redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.updated}");
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.user.updateFailed}" + e.getMessage());
             return "redirect:/users";
         }
         return "redirect:/users";
@@ -52,7 +52,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Usuário excluído com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.deleted}");
         return "redirect:/users";
     }
 
@@ -60,9 +60,9 @@ public class UserController {
     public String promoteToAdmin(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
             service.promoteToAdmin(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Usuário promovido a ADMIN com sucesso!");
+            redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.promoted}");
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.user.updateFailed}" + e.getMessage());
         }
         return "redirect:/users";
     }

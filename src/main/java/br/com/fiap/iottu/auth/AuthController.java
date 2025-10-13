@@ -28,7 +28,7 @@ public class AuthController {
         }
 
         if (logout != null) {
-            model.addAttribute("successMessage", "Você foi desconectado com sucesso.");
+            model.addAttribute("successMessage", "{message.success.auth.loggedOut}");
         }
 
         return "login";
@@ -47,7 +47,7 @@ public class AuthController {
         }
 
         if (userService.findByEmail(user.getEmail()).isPresent()) {
-            bindingResult.rejectValue("email", "error.user", "Este e-mail já está em uso.");
+            bindingResult.rejectValue("email", "error.user", "{validation.user.email.inUse}");
             return "auth/register";
         }
 
@@ -56,10 +56,10 @@ public class AuthController {
         } else {
             user.setRole("USER");
         }
-        
+
         userService.save(user);
 
-        redirectAttributes.addFlashAttribute("successMessage", "Cadastro realizado com sucesso! Faça o login.");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.auth.registered}");
         return "redirect:/login";
     }
 }

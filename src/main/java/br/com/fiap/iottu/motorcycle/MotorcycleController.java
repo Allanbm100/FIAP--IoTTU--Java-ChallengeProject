@@ -87,10 +87,10 @@ public class MotorcycleController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar moto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.motorcycle.createFailed}" + e.getMessage());
             return "motorcycle/form";
         }
-        redirectAttributes.addFlashAttribute("successMessage", "Moto cadastrada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.created}");
         return "redirect:/motorcycles";
     }
 
@@ -125,17 +125,17 @@ public class MotorcycleController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar moto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.motorcycle.updateFailed}" + e.getMessage());
             return "motorcycle/form";
         }
-        redirectAttributes.addFlashAttribute("successMessage", "Moto atualizada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.updated}");
         return "redirect:/motorcycles";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteByIdWithTagUnbinding(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Moto excluída com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.deleted}");
         return "redirect:/motorcycles";
     }
 }

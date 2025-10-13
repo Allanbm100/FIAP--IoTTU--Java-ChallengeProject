@@ -39,7 +39,7 @@ public class AntennaController {
             return "antenna/form";
         }
         service.save(antenna);
-        redirectAttributes.addFlashAttribute("successMessage", "Antena cadastrada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.created}");
         return "redirect:/antennas";
     }
 
@@ -58,14 +58,14 @@ public class AntennaController {
         }
         antenna.setId(id);
         service.save(antenna);
-        redirectAttributes.addFlashAttribute("successMessage", "Antena atualizada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.updated}");
         return "redirect:/antennas";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Antena excluída com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.deleted}");
         return "redirect:/antennas";
     }
 }

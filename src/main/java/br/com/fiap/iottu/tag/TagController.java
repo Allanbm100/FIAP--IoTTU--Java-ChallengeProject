@@ -37,7 +37,7 @@ public class TagController {
             return "tag/form";
         }
         service.save(tag);
-        redirectAttributes.addFlashAttribute("successMessage", "Tag cadastrada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.created}");
         return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
     }
 
@@ -56,14 +56,14 @@ public class TagController {
         }
         tag.setId(id);
         service.save(tag);
-        redirectAttributes.addFlashAttribute("successMessage", "Tag atualizada com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.updated}");
         return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Tag excluída com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.deleted}");
         return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
     }
 }

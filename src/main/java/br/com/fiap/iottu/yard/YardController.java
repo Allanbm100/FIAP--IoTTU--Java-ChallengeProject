@@ -45,7 +45,7 @@ public class YardController {
             return "yard/form";
         }
         service.save(yard);
-        redirectAttributes.addFlashAttribute("successMessage", "Pátio cadastrado com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.created}");
         return "redirect:/yards";
     }
 
@@ -64,20 +64,20 @@ public class YardController {
         }
         yard.setId(id);
         service.save(yard);
-        redirectAttributes.addFlashAttribute("successMessage", "Pátio atualizado com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.updated}");
         return "redirect:/yards";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Pátio excluído com sucesso!");
+        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.deleted}");
         return "redirect:/yards";
     }
 
     @GetMapping("/{id}/map")
     public String showYardMap(@PathVariable Integer id, Model model) {
-        Yard yard = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Pátio inválido: " + id));
+        Yard yard = service.findById(id).orElseThrow(() -> new IllegalArgumentException("{message.error.yard.invalid}" + id));
         YardMapDTO mapData = service.prepareYardMapData(id);
         model.addAttribute("yard", yard);
         model.addAttribute("mapData", mapData);
