@@ -34,7 +34,6 @@ public class TagController {
     public String create(@Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("redirectUrl", redirectUrl);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar tag. Verifique os campos.");
             return "tag/form";
         }
         service.save(tag);
@@ -53,7 +52,6 @@ public class TagController {
     public String update(@PathVariable Integer id, @Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("redirectUrl", redirectUrl);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar tag. Verifique os campos.");
             return "tag/form";
         }
         tag.setId(id);

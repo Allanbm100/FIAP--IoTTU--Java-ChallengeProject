@@ -1,6 +1,11 @@
 package br.com.fiap.iottu.yard;
 
+import br.com.fiap.iottu.antenna.Antenna;
+import br.com.fiap.iottu.antenna.AntennaService;
+import br.com.fiap.iottu.motorcycle.Motorcycle;
+import br.com.fiap.iottu.motorcycle.MotorcycleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +16,16 @@ public class YardService {
 
     @Autowired
     private YardRepository repository;
+
+    @Lazy
+    @Autowired
+    private AntennaService antennaService;
+
+    @Autowired
+    private MotorcycleService motorcycleService;
+
+    @Autowired
+    private YardMapService yardMapService;
 
     public List<Yard> findAll() {
         return repository.findAll();
@@ -28,4 +43,13 @@ public class YardService {
         repository.deleteById(id);
     }
 
+    public YardMapDTO prepareYardMapData(Integer yardId) {
+        Yard yard= findById(yardId)
+                .orElseThrow(() -> new IllegalArgumentException("Pátio inválido: " + yardId));
+
+        List<Antenna> antennas = antennaService.findByYardId(yardId);
+        List<Motorcycle> motorcycles = motorcycleService.findByYardId(yardId);
+
+        return yardMapService.createMap(antennas, motorcycles);
+    }
 }

@@ -23,8 +23,10 @@ public class MotorcycleService {
 
     @Autowired
     private MotorcycleStatusRepository motorcycleStatusRepository;
+
     @Autowired
     private YardRepository yardRepository;
+
     @Autowired
     private TagService tagService;
 
@@ -49,23 +51,53 @@ public class MotorcycleService {
     }
 
     @Transactional
+    public Motorcycle saveOrUpdateWithTag(Motorcycle motorcycle, Integer selectedTagId) {
+        Optional<Tag> tagOptional = tagService.findById(selectedTagId);
+
+        if (tagOptional.isEmpty()) {
+            throw new IllegalArgumentException("Tag selecionada não encontrada");
+        }
+        Tag newTag = tagOptional.get();
+
+        if (newTag.getMotorcycles() != null && !newTag.getMotorcycles().isEmpty()) {
+            boolean isAssignedToThisMotorcycle = motorcycle.getId() != null && newTag.getMotorcycles().contains(motorcycle);
+
+            if (!isAssignedToThisMotorcycle) {
+                throw new IllegalArgumentException("A tag selecionada já está associada a outra moto");
+            }
+        }
+
+        if (motorcycle.getId() != null) {
+            Optional<Motorcycle> existingMotorcycleOptional = repository.findById(motorcycle.getId());
+            if (existingMotorcycleOptional.isPresent()) {
+                Motorcycle existingMotorcycle = existingMotorcycleOptional.get();
+
+                if (existingMotorcycle.getTags() != null && !existingMotorcycle.getTags().isEmpty()) {
+                    Tag oldTag = existingMotorcycle.getTags().get(0);
+
+                    if (!oldTag.equals(newTag)) {
+                        oldTag.getMotorcycles().remove(existingMotorcycle);
+                        tagService.save(oldTag);
+                    }
+                }
+            }
+        }
+        motorcycle.setTags(new ArrayList<>());
+        motorcycle.getTags().add(newTag);
+        return repository.save(motorcycle);
+    }
+
+    @Transactional
     public void processMotorcyclesData(List<MotorcycleDataDTO> motorcycleDataDTOs) {
         for (MotorcycleDataDTO dto : motorcycleDataDTOs) {
-            // Busca a moto pelo chassi; se não encontrar, cria uma nova instância
             Motorcycle motorcycle = repository.findByChassi(dto.getChassiMoto()).orElse(new Motorcycle());
 
-            // O ID da moto será gerenciado automaticamente pelo banco de dados (se for um novo registro)
-            // ou será o ID da moto existente encontrada pelo chassi.
-            // Não precisamos mais chamar motorcycle.setId(dto.getIdMoto());
-
-            // Fetch and set MotorcycleStatus
             MotorcycleStatus status = motorcycleStatusRepository.findById(dto.getIdStatus())
-                    .orElseThrow(() -> new RuntimeException("MotorcycleStatus not found for ID: " + dto.getIdStatus()));
+                    .orElseThrow(() -> new IllegalArgumentException("Status da moto não encontrado para o ID: " + dto.getIdStatus()));
             motorcycle.setStatus(status);
 
-            // Fetch and set Yard
             Yard yard = yardRepository.findById(dto.getIdPatio())
-                    .orElseThrow(() -> new RuntimeException("Yard not found for ID: " + dto.getIdPatio()));
+                    .orElseThrow(() -> new IllegalArgumentException("Pátio não encontrado para o ID: " + dto.getIdPatio()));
             motorcycle.setYard(yard);
 
             motorcycle.setLicensePlate(dto.getPlacaMoto());
@@ -73,7 +105,6 @@ public class MotorcycleService {
             motorcycle.setEngineNumber(dto.getNrMotorMoto());
             motorcycle.setModel(dto.getModeloMoto());
 
-            // Handle Tag data
             if (dto.getCodigoRfidTag() != null && !dto.getCodigoRfidTag().isEmpty()) {
                 Tag tag = tagService.findOrCreateTag(
                         dto.getCodigoRfidTag(),
@@ -81,19 +112,27 @@ public class MotorcycleService {
                         dto.getLatitude(),
                         dto.getLongitude()
                 );
-
-                // Ensure the tags list is initialized
                 if (motorcycle.getTags() == null) {
                     motorcycle.setTags(new ArrayList<>());
                 }
-
-                // Add tag if not already present
                 if (!motorcycle.getTags().contains(tag)) {
                     motorcycle.getTags().add(tag);
                 }
             }
-
             repository.save(motorcycle);
         }
+    }
+
+    @Transactional
+    public void deleteByIdWithTagUnbinding(Integer id) {
+        Motorcycle motorcycleToDelete = findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrada para o ID: " + id));
+
+        if (motorcycleToDelete.getTags() != null  && !motorcycleToDelete.getTags().isEmpty()) {
+            Tag associatedTag = motorcycleToDelete.getTags().get(0);
+            associatedTag.getMotorcycles().remove(motorcycleToDelete);
+            tagService.save(associatedTag);
+        }
+        repository.deleteById(id);
     }
 }

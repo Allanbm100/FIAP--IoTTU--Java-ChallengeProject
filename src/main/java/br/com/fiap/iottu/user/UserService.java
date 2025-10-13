@@ -112,4 +112,21 @@ public class UserService implements UserDetailsService {
             return new SimpleEntry<>(newUser, true);
         }
     }
+
+    public User updateWithPasswordPreservation(Integer id, User userDetails) {
+        User existingUser = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para o ID: " + id));
+
+        userDetails.setPassword(existingUser.getPassword());
+        userDetails.setId(id);
+        return repository.save(userDetails);
+    }
+
+    public User promoteToAdmin(Integer id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para o ID: " + id));
+
+        user.setRole("ADMIN");
+        return repository.save(user);
+    }
 }

@@ -37,16 +37,15 @@ public class UserController {
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @Validated(OnUpdate.class) @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar usuário. Verifique os campos.");
             return "user/form";
         }
-
-        User existingUser = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário inválido: " + id));
-        user.setPassword(existingUser.getPassword());
-
-        user.setId(id);
-        service.save(user);
-        redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
+        try {
+            service.updateWithPasswordPreservation(id, user);
+            redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro: " + e.getMessage());
+            return "redirect:/users";
+        }
         return "redirect:/users";
     }
 
@@ -59,10 +58,12 @@ public class UserController {
 
     @PostMapping("/{id}/promote")
     public String promoteToAdmin(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        User user = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Usuário inválido: " + id));
-        user.setRole("ADMIN");
-        service.save(user);
-        redirectAttributes.addFlashAttribute("successMessage", "Usuário promovido a ADMIN com sucesso!");
+        try {
+            service.promoteToAdmin(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Usuário promovido a ADMIN com sucesso!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro: " + e.getMessage());
+        }
         return "redirect:/users";
     }
 }

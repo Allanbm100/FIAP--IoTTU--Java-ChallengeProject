@@ -25,15 +25,6 @@ public class YardController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private AntennaService antennaService;
-
-    @Autowired
-    private MotorcycleService motorcycleService;
-
-    @Autowired
-    private YardMapService yardMapService;
-
     @GetMapping
     public String listYards(Model model) {
         model.addAttribute("yards", service.findAll());
@@ -51,7 +42,6 @@ public class YardController {
     public String create(@Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userService.findAll());
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar pátio. Verifique os campos.");
             return "yard/form";
         }
         service.save(yard);
@@ -70,7 +60,6 @@ public class YardController {
     public String update(@PathVariable Integer id, @Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userService.findAll());
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar pátio. Verifique os campos.");
             return "yard/form";
         }
         yard.setId(id);
@@ -89,11 +78,7 @@ public class YardController {
     @GetMapping("/{id}/map")
     public String showYardMap(@PathVariable Integer id, Model model) {
         Yard yard = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Pátio inválido: " + id));
-        List<Antenna> antennas = antennaService.findByYardId(id);
-        List<Motorcycle> motorcycles = motorcycleService.findByYardId(id);
-
-        YardMapDTO mapData = yardMapService.createMap(antennas, motorcycles);
-
+        YardMapDTO mapData = service.prepareYardMapData(id);
         model.addAttribute("yard", yard);
         model.addAttribute("mapData", mapData);
 

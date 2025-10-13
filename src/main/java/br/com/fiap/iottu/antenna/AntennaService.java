@@ -53,7 +53,6 @@ public class AntennaService {
                 }
                 Yard yard = yardOptional.get();
 
-                // Tenta encontrar a antena existente pelo código, se não existir, cria uma nova
                 Antenna antenna = repository.findByCode(dto.getCodigoAntena())
                         .orElse(new Antenna());
 

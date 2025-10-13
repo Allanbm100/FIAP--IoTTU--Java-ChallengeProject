@@ -44,26 +44,17 @@ public class TagService {
 
         if (existingTag.isPresent()) {
             tag = existingTag.get();
-            // Update existing tag's data
-            tag.setWifiSsid(wifiSsid);
-            if (latitude != null) {
-                tag.setLatitude(BigDecimal.valueOf(latitude));
-            }
-            if (longitude != null) {
-                tag.setLongitude(BigDecimal.valueOf(longitude));
-            }
         } else {
             tag = new Tag();
             tag.setRfidCode(rfidCode);
-            tag.setWifiSsid(wifiSsid);
-            if (latitude != null) {
-                tag.setLatitude(BigDecimal.valueOf(latitude));
-            }
-            if (longitude != null) {
-                tag.setLongitude(BigDecimal.valueOf(longitude));
-            }
         }
-        tag.setTimestamp(LocalDateTime.now()); // Adicionado
+        tag.setWifiSsid(wifiSsid);
+        if (latitude != null) {
+            tag.setLatitude(BigDecimal.valueOf(latitude));
+        }
+        if (longitude != null) {
+            tag.setLongitude(BigDecimal.valueOf(longitude));
+        }
         return repository.save(tag);
     }
 }

@@ -80,32 +80,16 @@ public class MotorcycleController {
     public String create(@Valid @ModelAttribute Motorcycle motorcycle, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar moto. Verifique os campos.");
             return "motorcycle/form";
         }
-
-        Integer selectedTagId = motorcycle.getSelectedTagId();
-        Optional<Tag> tagOptional = tagService.findById(selectedTagId);
-
-        if (tagOptional.isEmpty()) {
-            bindingResult.rejectValue("selectedTagId", "NotFound", "Tag selecionada não encontrada.");
+        try {
+            service.saveOrUpdateWithTag(motorcycle, motorcycle.getSelectedTagId());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar moto. Tag não encontrada.");
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar moto: " + e.getMessage());
             return "motorcycle/form";
         }
-
-        Tag selectedTag = tagOptional.get();
-        if (selectedTag.getMotorcycles() != null && !selectedTag.getMotorcycles().isEmpty()) {
-            bindingResult.rejectValue("selectedTagId", "TagAlreadyAssigned", "A tag selecionada já está associada a outra moto.");
-            addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar moto. Tag já em uso.");
-            return "motorcycle/form";
-        }
-
-        motorcycle.setTags(new ArrayList<>());
-        motorcycle.getTags().add(selectedTag);
-
-        service.save(motorcycle);
         redirectAttributes.addFlashAttribute("successMessage", "Moto cadastrada com sucesso!");
         return "redirect:/motorcycles";
     }
@@ -124,6 +108,8 @@ public class MotorcycleController {
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @Valid @ModelAttribute Motorcycle motorcycle, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        motorcycle.setId(id);
+
         if (bindingResult.hasErrors()) {
             if (motorcycle.getSelectedTagId() == null) {
                 Motorcycle originalMotorcycle = service.findById(id).orElseThrow();
@@ -132,59 +118,23 @@ public class MotorcycleController {
                 }
             }
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar moto. Verifique os campos.");
             return "motorcycle/form";
         }
-
-        Integer selectedTagId = motorcycle.getSelectedTagId();
-        Optional<Tag> tagOptional = tagService.findById(selectedTagId);
-
-        if (tagOptional.isEmpty()) {
-            bindingResult.rejectValue("selectedTagId", "NotFound", "Tag selecionada não encontrada.");
+        try {
+            service.saveOrUpdateWithTag(motorcycle, motorcycle.getSelectedTagId());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar moto. Tag não encontrada.");
+            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar moto: " + e.getMessage());
             return "motorcycle/form";
         }
-
-        Tag newTag = tagOptional.get();
-        Motorcycle existingMotorcycle = service.findById(id).orElseThrow();
-
-        if (newTag.getMotorcycles() != null && !newTag.getMotorcycles().isEmpty() && !newTag.getMotorcycles().contains(existingMotorcycle)) {
-            bindingResult.rejectValue("selectedTagId", "TagAlreadyAssigned", "A tag selecionada já está associada a outra moto.");
-            addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar moto. Tag já em uso.");
-            return "motorcycle/form";
-        }
-
-        if (existingMotorcycle.getTags() != null && !existingMotorcycle.getTags().isEmpty()) {
-            Tag oldTag = existingMotorcycle.getTags().get(0);
-            if (!oldTag.equals(newTag)) {
-                oldTag.getMotorcycles().remove(existingMotorcycle);
-                tagService.save(oldTag);
-            }
-        }
-
-        motorcycle.setId(id);
-        motorcycle.setTags(new ArrayList<>());
-        motorcycle.getTags().add(newTag);
-
-        service.save(motorcycle);
-
         redirectAttributes.addFlashAttribute("successMessage", "Moto atualizada com sucesso!");
         return "redirect:/motorcycles";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        Motorcycle motorcycleToDelete = service.findById(id).orElseThrow();
-
-        if (motorcycleToDelete.getTags() != null && !motorcycleToDelete.getTags().isEmpty()) {
-            Tag associatedTag = motorcycleToDelete.getTags().get(0);
-            associatedTag.getMotorcycles().remove(motorcycleToDelete);
-            tagService.save(associatedTag);
-        }
-
-        service.deleteById(id);
+        service.deleteByIdWithTagUnbinding(id);
         redirectAttributes.addFlashAttribute("successMessage", "Moto excluída com sucesso!");
         return "redirect:/motorcycles";
     }

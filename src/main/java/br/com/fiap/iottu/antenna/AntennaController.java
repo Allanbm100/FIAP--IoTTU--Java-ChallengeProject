@@ -36,7 +36,6 @@ public class AntennaController {
     public String create(@Valid @ModelAttribute Antenna antenna, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("yards", yardService.findAll());
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao cadastrar antena. Verifique os campos.");
             return "antenna/form";
         }
         service.save(antenna);
@@ -55,7 +54,6 @@ public class AntennaController {
     public String update(@PathVariable Integer id, @Valid @ModelAttribute Antenna antenna, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("yards", yardService.findAll());
-            redirectAttributes.addFlashAttribute("failureMessage", "Erro ao atualizar antena. Verifique os campos.");
             return "antenna/form";
         }
         antenna.setId(id);
