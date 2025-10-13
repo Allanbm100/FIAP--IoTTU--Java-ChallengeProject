@@ -398,3 +398,61 @@ a:hover {
     background-color: var(--container-bg);
     color: var(--text-color);
 }
+
+.social-login {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.social-login p {
+    margin-bottom: 1rem;
+    color: #ccc;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.85rem 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.btn-github {
+    background-color: #333;
+    color: var(--text-color);
+    border-color: #555;
+}
+
+.btn-github:hover {
+    background-color: #444;
+    border-color: var(--primary-color);
+}
+
+.btn-google {
+    background-color: #4285F4;
+    color: #fff;
+    border-color: #3373E6;
+}
+
+.btn-google:hover {
+    background-color: #3073E6;
+    border-color: #3373E6;
+}
+
+.social-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.btn-github .social-icon path {
+    fill: #E0E0E0;
+}
+
+.btn-google .social-icon {
+}
