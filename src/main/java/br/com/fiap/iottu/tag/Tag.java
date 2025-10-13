@@ -16,31 +16,30 @@ import java.util.List;
 @Entity
 @Table(name = "TB_TAG")
 public class Tag {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tag")
     private Integer id;
 
-    @NotBlank(message = "O código RFID não pode estar vazio.")
-    @Size(min = 5, max = 20, message = "O código RFID deve ter entre 5 e 20 caracteres.")
+    @NotBlank(message = "{validation.tag.rfidCode.notBlank}")
+    @Size(min = 5, max = 20, message = "{validation.tag.rfidCode.size}")
     @Column(name = "codigo_rfid_tag")
     private String rfidCode;
 
-    @NotBlank(message = "O SSID Wi-Fi não pode estar vazio.")
-    @Size(min = 2, max = 32, message = "O SSID Wi-Fi deve ter entre 2 e 32 caracteres.")
+    @NotBlank(message = "{validation.tag.wifiSsid.notBlank}")
+    @Size(min = 2, max = 32, message = "{validation.tag.wifiSsid.size}")
     @Column(name = "ssid_wifi_tag")
     private String wifiSsid;
 
-    @NotNull(message = "A latitude não pode ser nula.")
-    @DecimalMin(value = "-90.0", message = "A latitude mínima é -90.0.")
-    @DecimalMax(value = "90.0", message = "A latitude máxima é 90.0.")
+    @NotNull(message = "{validation.tag.latitude.notNull}")
+    @DecimalMin(value = "-90.0", message = "{validation.tag.latitude.min}")
+    @DecimalMax(value = "90.0", message = "{validation.tag.latitude.max}")
     @Column(name = "latitude_tag", precision = 10, scale = 6)
     private BigDecimal latitude;
 
-    @NotNull(message = "A longitude não pode ser nula.")
-    @DecimalMin(value = "-180.0", message = "A longitude mínima é -180.0.")
-    @DecimalMax(value = "180.0", message = "A longitude máxima é 180.0.")
+    @NotNull(message = "{validation.tag.longitude.notNull}")
+    @DecimalMin(value = "-180.0", message = "{validation.tag.longitude.min}")
+    @DecimalMax(value = "180.0", message = "{validation.tag.longitude.max}")
     @Column(name = "longitude_tag", precision = 10, scale = 6)
     private BigDecimal longitude;
 

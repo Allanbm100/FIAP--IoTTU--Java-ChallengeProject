@@ -12,39 +12,38 @@ import lombok.Data;
 @Entity
 @Table(name = "TB_PATIO")
 public class Yard {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_patio")
     private Integer id;
 
-    @NotNull(message = "O usuário responsável não pode ser nulo.")
+    @NotNull(message = "{validation.yard.user.notNull}")
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private User user;
 
-    @NotBlank(message = "O CEP não pode estar vazio.")
-    @Size(min = 8, max = 8, message = "O CEP deve ter 8 caracteres.")
+    @NotBlank(message = "{validation.yard.zipCode.notBlank}")
+    @Size(min = 8, max = 8, message = "{validation.yard.zipCode.size}")
     @Column(name = "cep_patio")
     private String zipCode;
 
-    @NotBlank(message = "O número não pode estar vazio.")
-    @Size(min = 1, max = 10, message = "O número deve ter entre 1 e 10 caracteres.")
+    @NotBlank(message = "{validation.yard.number.notBlank}")
+    @Size(min = 1, max = 10, message = "{validation.yard.number.size}")
     @Column(name = "numero_patio")
     private String number;
 
-    @NotBlank(message = "A cidade não pode estar vazia.")
-    @Size(min = 2, max = 50, message = "A cidade deve ter entre 2 e 50 caracteres.")
+    @NotBlank(message = "{validation.yard.city.notBlank}")
+    @Size(min = 2, max = 50, message = "{validation.yard.city.size}")
     @Column(name = "cidade_patio")
     private String city;
 
-    @NotBlank(message = "O estado não pode estar vazio.")
-    @Size(min = 2, max = 2, message = "O estado deve ter 2 caracteres (UF).")
+    @NotBlank(message = "{validation.yard.state.notBlank}")
+    @Size(min = 2, max = 2, message = "{validation.yard.state.size}")
     @Column(name = "estado_patio")
     private String state;
 
-    @NotNull(message = "A capacidade não pode ser nula.")
-    @Min(value = 0, message = "A capacidade mínima é 0.")
+    @NotNull(message = "{validation.yard.capacity.notNull}")
+    @Min(value = 0, message = "{validation.yard.capacity.min}")
     @Column(name = "capacidade_patio")
     private Integer capacity;
 }

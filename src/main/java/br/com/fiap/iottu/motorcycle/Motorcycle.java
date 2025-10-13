@@ -15,39 +15,38 @@ import java.util.List;
 @Entity
 @Table(name = "TB_MOTO")
 public class Motorcycle {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_moto")
     private Integer id;
 
-    @NotNull(message = "O status da moto não pode ser nulo.")
+    @NotNull(message = "{validation.motorcycle.status.notNull}")
     @ManyToOne
     @JoinColumn(name = "id_status")
     private MotorcycleStatus status;
 
-    @NotNull(message = "O pátio da moto não pode ser nulo.")
+    @NotNull(message = "{validation.motorcycle.yard.notNull}")
     @ManyToOne
     @JoinColumn(name = "id_patio")
     private Yard yard;
 
-    @NotBlank(message = "A placa da moto não pode estar vazia.")
-    @Size(min = 7, max = 7, message = "A placa da moto deve ter 7 caracteres.")
+    @NotBlank(message = "{validation.motorcycle.licensePlate.notBlank}")
+    @Size(min = 7, max = 7, message = "{validation.motorcycle.licensePlate.size}")
     @Column(name = "placa_moto")
     private String licensePlate;
 
-    @NotBlank(message = "O chassi da moto não pode estar vazio.")
-    @Size(min = 17, max = 17, message = "O chassi da moto deve ter 17 caracteres.")
+    @NotBlank(message = "{validation.motorcycle.chassi.notBlank}")
+    @Size(min = 17, max = 17, message = "{validation.motorcycle.chassi.size}")
     @Column(name = "chassi_moto")
     private String chassi;
 
-    @NotBlank(message = "O número do motor da moto não pode estar vazio.")
-    @Size(min = 5, max = 20, message = "O número do motor deve ter entre 5 e 20 caracteres.")
+    @NotBlank(message = "{validation.motorcycle.engineNumber.notBlank}")
+    @Size(min = 5, max = 20, message = "{validation.motorcycle.engineNumber.size}")
     @Column(name = "nr_motor_moto")
     private String engineNumber;
 
-    @NotBlank(message = "O modelo da moto não pode estar vazio.")
-    @Size(min = 2, max = 50, message = "O modelo da moto deve ter entre 2 e 50 caracteres.")
+    @NotBlank(message = "{validation.motorcycle.model.notBlank}")
+    @Size(min = 2, max = 50, message = "{validation.motorcycle.model.size}")
     @Column(name = "modelo_moto")
     private String model;
 
