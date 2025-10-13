@@ -48,7 +48,7 @@ public class AntennaService {
             try {
                 Optional<Yard> yardOptional = yardService.findById(dto.getIdPatio());
                 if (yardOptional.isEmpty()) {
-                    log.warn("Pátio com ID {} não encontrado para a antena {}. Antena não será processada.", dto.getIdPatio(), dto.getCodigoAntena());
+                    log.warn("{service.antenna.warn.yardNotFound}", dto.getIdPatio(), dto.getCodigoAntena());
                     continue;
                 }
                 Yard yard = yardOptional.get();
@@ -62,9 +62,9 @@ public class AntennaService {
                 antenna.setLongitude(BigDecimal.valueOf(dto.getLongitudeAntena()));
 
                 repository.save(antenna);
-                log.info("Antena {} processada e salva com sucesso.", dto.getCodigoAntena());
+                log.info("{service.antenna.info.saved}", dto.getCodigoAntena());
             } catch (Exception e) {
-                log.error("Erro ao processar dados da antena {}: {}", dto.getCodigoAntena(), e.getMessage(), e);
+                log.error("{service.antenna.error.processing}", dto.getCodigoAntena(), e.getMessage(), e);
             }
         }
     }

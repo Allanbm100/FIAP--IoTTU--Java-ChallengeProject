@@ -45,7 +45,7 @@ public class YardService {
 
     public YardMapDTO prepareYardMapData(Integer yardId) {
         Yard yard= findById(yardId)
-                .orElseThrow(() -> new IllegalArgumentException("Pátio inválido: " + yardId));
+                .orElseThrow(() -> new IllegalArgumentException("{service.yard.error.invalidId}" + yardId));
 
         List<Antenna> antennas = antennaService.findByYardId(yardId);
         List<Motorcycle> motorcycles = motorcycleService.findByYardId(yardId);

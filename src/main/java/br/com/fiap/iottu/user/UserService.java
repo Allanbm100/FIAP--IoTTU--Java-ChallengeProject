@@ -27,7 +27,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("{service.user.error.notFoundByEmail}" + username));
 
         return org.springframework.security.core.userdetails.User
                 .builder()
@@ -78,7 +78,7 @@ public class UserService implements UserDetailsService {
                 email = login + "@github.com";
                 log.info("Using fallback email: {}", email);
             } else {
-                throw new IllegalArgumentException("Email do usuário OAuth2 não encontrado ou inválido.");
+                throw new IllegalArgumentException("{service.user.error.oauth2EmailInvalid}");
             }
         }
 
@@ -115,7 +115,7 @@ public class UserService implements UserDetailsService {
 
     public User updateWithPasswordPreservation(Integer id, User userDetails) {
         User existingUser = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para o ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("{service.user.error.notFoundById}" + id));
 
         userDetails.setPassword(existingUser.getPassword());
         userDetails.setId(id);
@@ -124,7 +124,7 @@ public class UserService implements UserDetailsService {
 
     public User promoteToAdmin(Integer id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para o ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("{service.user.error.notFoundById}" + id));
 
         user.setRole("ADMIN");
         return repository.save(user);

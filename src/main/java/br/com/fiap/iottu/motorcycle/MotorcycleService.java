@@ -55,7 +55,7 @@ public class MotorcycleService {
         Optional<Tag> tagOptional = tagService.findById(selectedTagId);
 
         if (tagOptional.isEmpty()) {
-            throw new IllegalArgumentException("Tag selecionada não encontrada");
+            throw new IllegalArgumentException("{service.motorcycle.error.tagNotFound}");
         }
         Tag newTag = tagOptional.get();
 
@@ -63,7 +63,7 @@ public class MotorcycleService {
             boolean isAssignedToThisMotorcycle = motorcycle.getId() != null && newTag.getMotorcycles().contains(motorcycle);
 
             if (!isAssignedToThisMotorcycle) {
-                throw new IllegalArgumentException("A tag selecionada já está associada a outra moto");
+                throw new IllegalArgumentException("{service.motorcycle.error.tagAlreadyAssigned}");
             }
         }
 
@@ -93,11 +93,11 @@ public class MotorcycleService {
             Motorcycle motorcycle = repository.findByChassi(dto.getChassiMoto()).orElse(new Motorcycle());
 
             MotorcycleStatus status = motorcycleStatusRepository.findById(dto.getIdStatus())
-                    .orElseThrow(() -> new IllegalArgumentException("Status da moto não encontrado para o ID: " + dto.getIdStatus()));
+                    .orElseThrow(() -> new IllegalArgumentException("{service.motorcycle.error.statusNotFound}" + dto.getIdStatus()));
             motorcycle.setStatus(status);
 
             Yard yard = yardRepository.findById(dto.getIdPatio())
-                    .orElseThrow(() -> new IllegalArgumentException("Pátio não encontrado para o ID: " + dto.getIdPatio()));
+                    .orElseThrow(() -> new IllegalArgumentException("{service.motorcycle.error.yardNotFound}" + dto.getIdPatio()));
             motorcycle.setYard(yard);
 
             motorcycle.setLicensePlate(dto.getPlacaMoto());
@@ -126,7 +126,7 @@ public class MotorcycleService {
     @Transactional
     public void deleteByIdWithTagUnbinding(Integer id) {
         Motorcycle motorcycleToDelete = findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrada para o ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("{service.motorcycle.error.notFoundById}" + id));
 
         if (motorcycleToDelete.getTags() != null  && !motorcycleToDelete.getTags().isEmpty()) {
             Tag associatedTag = motorcycleToDelete.getTags().get(0);
