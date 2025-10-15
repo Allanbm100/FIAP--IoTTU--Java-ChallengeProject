@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.tag;
 
+import br.com.fiap.iottu.helper.MessageHelper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,9 @@ public class TagController {
 
     @Autowired
     private TagService service;
+
+    @Autowired
+    private MessageHelper messageHelper;
 
     @GetMapping
     public String listTags(Model model) {
@@ -56,14 +60,14 @@ public class TagController {
         }
         tag.setId(id);
         service.save(tag);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.updated}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.updated"));
         return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.deleted}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.deleted"));
         return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
     }
 }

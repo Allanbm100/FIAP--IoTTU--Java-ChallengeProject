@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.antenna;
 
+import br.com.fiap.iottu.helper.MessageHelper;
 import br.com.fiap.iottu.yard.YardService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class AntennaController {
 
     @Autowired
     private YardService yardService;
+
+    @Autowired
+    private MessageHelper messageHelper;
 
     @GetMapping
     public String listAntennas(Model model) {
@@ -39,7 +43,7 @@ public class AntennaController {
             return "antenna/form";
         }
         service.save(antenna);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.created}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.antenna.created"));
         return "redirect:/antennas";
     }
 
@@ -58,14 +62,14 @@ public class AntennaController {
         }
         antenna.setId(id);
         service.save(antenna);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.updated}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.antenna.updated"));
         return "redirect:/antennas";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.antenna.deleted}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.antenna.deleted"));
         return "redirect:/antennas";
     }
 }

@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.auth;
 
+import br.com.fiap.iottu.helper.MessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,8 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private MessageHelper messageHelper;
 
     @GetMapping("/login")
     public String loginPage(Authentication authentication, Model model, @RequestParam(value = "logout", required = false) String logout) {
@@ -28,7 +31,7 @@ public class AuthController {
         }
 
         if (logout != null) {
-            model.addAttribute("successMessage", "{message.success.auth.loggedOut}");
+            model.addAttribute("successMessage", messageHelper.getMessage("message.success.auth.loggedOut"));
         }
 
         return "login";
@@ -47,7 +50,7 @@ public class AuthController {
         }
 
         if (userService.findByEmail(user.getEmail()).isPresent()) {
-            bindingResult.rejectValue("email", "error.user", "{validation.user.email.inUse}");
+            bindingResult.rejectValue("email", "error.user", messageHelper.getMessage("validation.user.email.inUse"));
             return "auth/register";
         }
 
@@ -59,7 +62,7 @@ public class AuthController {
 
         userService.save(user);
 
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.auth.registered}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.auth.registered"));
         return "redirect:/login";
     }
 }

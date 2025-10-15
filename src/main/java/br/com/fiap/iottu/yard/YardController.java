@@ -2,6 +2,7 @@ package br.com.fiap.iottu.yard;
 
 import br.com.fiap.iottu.antenna.Antenna;
 import br.com.fiap.iottu.antenna.AntennaService;
+import br.com.fiap.iottu.helper.MessageHelper;
 import br.com.fiap.iottu.motorcycle.Motorcycle;
 import br.com.fiap.iottu.motorcycle.MotorcycleService;
 import br.com.fiap.iottu.user.UserService;
@@ -25,6 +26,9 @@ public class YardController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageHelper messageHelper;
+
     @GetMapping
     public String listYards(Model model) {
         model.addAttribute("yards", service.findAll());
@@ -45,7 +49,7 @@ public class YardController {
             return "yard/form";
         }
         service.save(yard);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.created}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.created"));
         return "redirect:/yards";
     }
 
@@ -64,14 +68,14 @@ public class YardController {
         }
         yard.setId(id);
         service.save(yard);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.updated}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.updated"));
         return "redirect:/yards";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.yard.deleted}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.deleted"));
         return "redirect:/yards";
     }
 

@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.user;
 
+import br.com.fiap.iottu.helper.MessageHelper;
 import br.com.fiap.iottu.validation.OnUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private MessageHelper messageHelper;
 
     @GetMapping
     public String list(Model model) {
@@ -41,9 +45,9 @@ public class UserController {
         }
         try {
             service.updateWithPasswordPreservation(id, user);
-            redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.updated}");
+            redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.user.updated"));
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.user.updateFailed}" + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.user.updateFailed") + e.getMessage());
             return "redirect:/users";
         }
         return "redirect:/users";
@@ -52,7 +56,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.deleted}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.user.deleted"));
         return "redirect:/users";
     }
 
@@ -60,9 +64,9 @@ public class UserController {
     public String promoteToAdmin(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
             service.promoteToAdmin(id);
-            redirectAttributes.addFlashAttribute("successMessage", "{message.success.user.promoted}");
+            redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.user.promoted"));
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.user.updateFailed}" + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.user.updateFailed") + e.getMessage());
         }
         return "redirect:/users";
     }

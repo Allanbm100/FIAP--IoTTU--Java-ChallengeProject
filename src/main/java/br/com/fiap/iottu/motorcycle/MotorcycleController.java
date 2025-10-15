@@ -1,5 +1,6 @@
 package br.com.fiap.iottu.motorcycle;
 
+import br.com.fiap.iottu.helper.MessageHelper;
 import br.com.fiap.iottu.motorcyclestatus.MotorcycleStatusService;
 import br.com.fiap.iottu.tag.Tag;
 import br.com.fiap.iottu.tag.TagService;
@@ -32,6 +33,9 @@ public class MotorcycleController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private MessageHelper messageHelper;
 
     private void addFormData(Model model) {
         model.addAttribute("yards", yardService.findAll());
@@ -87,10 +91,10 @@ public class MotorcycleController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.motorcycle.createFailed}" + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.motorcycle.createFailed") + e.getMessage());
             return "motorcycle/form";
         }
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.created}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.motorcycle.created"));
         return "redirect:/motorcycles";
     }
 
@@ -125,17 +129,17 @@ public class MotorcycleController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             bindingResult.rejectValue("selectedTagId", "TagError", e.getMessage());
             addFormData(model, motorcycle);
-            redirectAttributes.addFlashAttribute("failureMessage", "{message.error.motorcycle.updateFailed}" + e.getMessage());
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.motorcycle.updateFailed") + e.getMessage());
             return "motorcycle/form";
         }
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.updated}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.motorcycle.updated"));
         return "redirect:/motorcycles";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteByIdWithTagUnbinding(id);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.motorcycle.deleted}");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.motorcycle.deleted"));
         return "redirect:/motorcycles";
     }
 }
