@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
 <head>
     <title th:text="${yard.id == null} ? #{yard.form.title.new} : #{yard.form.title.edit}">Formulário de Pátio</title>
 </head>
@@ -12,19 +15,15 @@
             <input type="hidden" th:field="*{id}"/>
             <input type="hidden" name="_method" value="put" th:if="${yard.id != null}"/>
 
-            <div class="form-group">
+            <div class="form-group" sec:authorize="hasRole('ADMIN')">
                 <label for="user" th:text="#{yard.form.label.responsibleUser}">Usuário Responsável</label>
-                <div th:if="${yard.user != null}">
-                    <input type="text" id="userDisplay" th:value="${yard.user.name}" readonly class="form-control">
-                    <input type="hidden" th:field="*{user.id}">
-                </div>
-                <div th:unless="${yard.user != null}">
-                    <select id="user" th:field="*{user}" th:errorclass="is-invalid" required>
-                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
-                    </select>
-                    <span th:errors="*{user}" class="error-message" th:if="${#fields.hasErrors('user')}"></span>
-                </div>
+                <select id="user" th:field="*{user}" th:errorclass="is-invalid" required>
+                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+                </select>
+                <span th:errors="*{user}" class="error-message" th:if="${#fields.hasErrors('user')}"></span>
             </div>
+
+            <input type="hidden" th:field="*{user}" sec:authorize="hasRole('USER')" />
 
             <div class="form-group">
                 <label for="zipCode" th:text="#{yard.form.label.zipCode}">CEP</label>

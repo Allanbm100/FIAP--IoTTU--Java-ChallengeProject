@@ -1,20 +1,17 @@
 package br.com.fiap.iottu.yard;
 
-import br.com.fiap.iottu.antenna.Antenna;
-import br.com.fiap.iottu.antenna.AntennaService;
 import br.com.fiap.iottu.helper.MessageHelper;
-import br.com.fiap.iottu.motorcycle.Motorcycle;
-import br.com.fiap.iottu.motorcycle.MotorcycleService;
+import br.com.fiap.iottu.user.User;
 import br.com.fiap.iottu.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/yards")
@@ -36,17 +33,26 @@ public class YardController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("yard", new Yard());
+    public String showCreateForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        Yard yard = new Yard();
+        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            yard.setUser(user);
+        }
+        model.addAttribute("yard", yard);
         model.addAttribute("users", userService.findAll());
         return "yard/form";
     }
 
     @PostMapping
-    public String create(@Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String create(@Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userService.findAll());
             return "yard/form";
+        }
+        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            yard.setUser(user);
         }
         service.save(yard);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.created"));
@@ -61,12 +67,16 @@ public class YardController {
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Integer id, @Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String update(@PathVariable Integer id, @Valid @ModelAttribute Yard yard, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userService.findAll());
             return "yard/form";
         }
         yard.setId(id);
+        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            yard.setUser(user);
+        }
         service.save(yard);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.updated"));
         return "redirect:/yards";
