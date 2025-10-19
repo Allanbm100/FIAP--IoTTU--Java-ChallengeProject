@@ -23,7 +23,7 @@
                 <span th:errors="*{yard}" class="error-message" th:if="${#fields.hasErrors('yard')}"></span>
                 <small class="form-text text-muted" th:if="${#lists.isEmpty(yards)}">
                     <span th:text="#{antenna.form.text.yardNotFound}">Não encontrou o Pátio?</span>
-                    <a th:href="@{/yards/new(redirectUrl=${antenna.id == null ? '/antenna/new' : '/antenna/edit/' + antenna.id})}" th:text="#{antenna.form.button.createYard}">Criar Pátio</a>
+                    <a th:href="@{/yards/new(origin=${antenna.id == null ? '/antennas/new' : '/antennas/edit/' + antenna.id})}" th:text="#{antenna.form.button.createYard}">Criar Pátio</a>
                 </small>
             </div>
 

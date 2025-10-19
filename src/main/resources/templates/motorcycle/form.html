@@ -53,7 +53,7 @@
                 <span th:errors="*{yard}" class="error-message" th:if="${#fields.hasErrors('yard')}"></span>
                 <small class="form-text text-muted" th:if="${#lists.isEmpty(yards)}">
                     <span th:text="#{motorcycle.form.text.yardNotFound}">Não encontrou o Pátio?</span>
-                    <a th:href="@{/yards/new(redirectUrl=${motorcycle.id == null ? '/motorcycles/new' : '/motorcycles/edit/' + motorcycle.id})}" th:text="#{motorcycle.form.button.createYard}">Criar Pátio</a>
+                    <a th:href="@{/yards/new(origin=${motorcycle.id == null ? '/motorcycles/new' : '/motorcycles/edit/' + motorcycle.id})}" th:text="#{motorcycle.form.button.createYard}">Criar Pátio</a>
                 </small>
             </div>
 

@@ -8,7 +8,7 @@
 <div layout:fragment="content">
     <div class="page-header">
         <h1 th:text="#{yard.list.header}">Gerenciamento de Pátios</h1>
-        <a th:href="@{/yards/new}" class="btn btn-primary" th:text="#{yard.list.button.new}">Novo Pátio</a>
+        <a th:href="@{/yards/new(origin='/yards')}" class="btn btn-primary" th:text="#{yard.list.button.new}">Novo Pátio</a>
     </div>
 
     <div class="table-container">
@@ -32,7 +32,7 @@
                 <td th:text="${yard.user.name}"></td>
                 <td class="actions">
                     <a th:href="@{/yards/{id}/map(id=${yard.id})}" class="btn btn-secondary btn-small" th:text="#{yard.list.button.viewMap}">Ver Mapa</a>
-                    <a th:href="@{/yards/edit/{id}(id=${yard.id})}" class="btn btn-secondary btn-small" th:text="#{yard.list.button.edit}">Editar</a>
+                    <a th:href="@{/yards/edit/{id}(id=${yard.id}, origin='/yards')}" class="btn btn-secondary btn-small" th:text="#{yard.list.button.edit}">Editar</a>
                     <form th:action="@{/yards/{id}(id=${yard.id})}" method="post" style="display:inline;">
                         <input type="hidden" name="_method" value="delete" />
                         <button type="submit" class="btn btn-secondary" th:text="#{yard.list.button.delete}" onclick="return confirm('Tem certeza que deseja excluir este pátio?')">Excluir</button>
