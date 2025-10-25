@@ -9,8 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-
 @Controller
 @RequestMapping("/tags")
 public class TagController {
@@ -28,46 +26,42 @@ public class TagController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model, @RequestParam(required = false) String redirectUrl) {
+    public String showCreateForm(Model model) {
         model.addAttribute("tag", new Tag());
-        model.addAttribute("redirectUrl", redirectUrl);
         return "tag/form";
     }
 
     @PostMapping
-    public String create(@Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
+    public String create(@Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("redirectUrl", redirectUrl);
             return "tag/form";
         }
         service.save(tag);
-        redirectAttributes.addFlashAttribute("successMessage", "{message.success.tag.created}");
-        return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
+        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.created"));
+        return "redirect:/tags";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Integer id, Model model, @RequestParam(required = false) String redirectUrl) {
+    public String showEditForm(@PathVariable Integer id, Model model) {
         model.addAttribute("tag", service.findById(id).orElseThrow());
-        model.addAttribute("redirectUrl", redirectUrl);
         return "tag/form";
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Integer id, @Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
+    public String update(@PathVariable Integer id, @Valid @ModelAttribute Tag tag, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("redirectUrl", redirectUrl);
             return "tag/form";
         }
         tag.setId(id);
         service.save(tag);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.updated"));
-        return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
+        return "redirect:/tags";
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam(required = false) String redirectUrl) {
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         service.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.deleted"));
-        return "redirect:" + (redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/tags");
+        return "redirect:/tags";
     }
 }

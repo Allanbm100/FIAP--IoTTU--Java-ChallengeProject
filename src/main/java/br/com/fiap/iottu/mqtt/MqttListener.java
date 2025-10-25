@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 public class MqttListener {
 
     private static final Logger log = LoggerFactory.getLogger(MqttListener.class);
-    private static final String MQTT_TOPIC_DATA = "fiap/iot/moto"; // Tópico único para motos e antenas
+    private static final String MQTT_TOPIC_DATA = "fiap/iot/moto";
 
     @Autowired
     private IMqttClient mqttClient;

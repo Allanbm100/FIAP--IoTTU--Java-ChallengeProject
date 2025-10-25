@@ -16,10 +16,8 @@ public class AntenaDataDTO {
     private Double x;
     private Double y;
 
-    // Construtor padrão
     public AntenaDataDTO() {}
 
-    // Getters e Setters
     public Integer getIdAntena() {
         return idAntena;
     }

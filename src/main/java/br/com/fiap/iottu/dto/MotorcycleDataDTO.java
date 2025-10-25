@@ -7,7 +7,7 @@ import lombok.Data;
 public class MotorcycleDataDTO {
 
     @JsonProperty("status")
-    private String statusDescription; // Descrição do status (e.g., "Disponível")
+    private String statusDescription;
 
     @JsonProperty("alerta")
     private String alerta;

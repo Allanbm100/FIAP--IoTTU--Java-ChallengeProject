@@ -7,10 +7,8 @@ public class AntenasPayloadDTO {
     @JsonProperty("antenas")
     private List<AntenaDataDTO> antenas;
 
-    // Construtor padrão
     public AntenasPayloadDTO() {}
 
-    // Getters e Setters
     public List<AntenaDataDTO> getAntenas() {
         return antenas;
     }
