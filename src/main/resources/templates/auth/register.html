@@ -12,20 +12,20 @@
 
             <div class="form-group">
                 <label for="name" th:text="#{register.label.fullName}">Nome Completo</label>
-                <input type="text" id="name" th:field="*{name}" class="form-control" required>
-                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="alert alert-danger"></div>
+                <input type="text" id="name" th:field="*{name}" class="form-control" th:errorclass="is-invalid">
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="email" th:text="#{register.label.email}">E-mail</label>
-                <input type="email" id="email" th:field="*{email}" class="form-control" required>
-                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger"></div>
+                <input type="email" id="email" th:field="*{email}" class="form-control" th:errorclass="is-invalid">
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="password" th:text="#{register.label.password}">Senha</label>
-                <input type="password" id="password" th:field="*{password}" class="form-control" required>
-                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger"></div>
+                <input type="password" id="password" th:field="*{password}" class="form-control" th:errorclass="is-invalid">
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
             </div>
 
             <div class="form-group">
