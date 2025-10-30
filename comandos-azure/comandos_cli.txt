@@ -18,3 +18,8 @@ chmod +x create-sql-postgres.sh
 ./create-sql-postgres.sh
 
 
+ls -l
+
+chmod +x deploy-iottu.sh
+
+./deploy-iottu.sh
