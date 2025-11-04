@@ -13,10 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/motorcycles")
@@ -82,7 +80,16 @@ public class MotorcycleController {
 
     @PostMapping
     public String create(@Valid @ModelAttribute Motorcycle motorcycle, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (motorcycle.getSelectedTagId() == null) {
+            bindingResult.rejectValue("selectedTagId", "NotNull", messageHelper.getMessage("validation.motorcycle.selectedTag.notNull"));
+        }
         if (bindingResult.hasErrors()) {
+            addFormData(model, motorcycle);
+            return "motorcycle/form";
+        }
+        Map<String, String> dupErrors = service.validateDuplicate(motorcycle);
+        if (!dupErrors.isEmpty()) {
+            dupErrors.forEach((field, msgKey) -> bindingResult.rejectValue(field, "Duplicate", messageHelper.getMessage(msgKey)));
             addFormData(model, motorcycle);
             return "motorcycle/form";
         }
@@ -114,13 +121,17 @@ public class MotorcycleController {
     public String update(@PathVariable Integer id, @Valid @ModelAttribute Motorcycle motorcycle, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         motorcycle.setId(id);
 
+        if (motorcycle.getSelectedTagId() == null) {
+            bindingResult.rejectValue("selectedTagId", "NotNull", messageHelper.getMessage("validation.motorcycle.selectedTag.notNull"));
+        }
+
         if (bindingResult.hasErrors()) {
-            if (motorcycle.getSelectedTagId() == null) {
-                Motorcycle originalMotorcycle = service.findById(id).orElseThrow();
-                if (originalMotorcycle.getTags() != null && !originalMotorcycle.getTags().isEmpty()) {
-                    motorcycle.setSelectedTagId(originalMotorcycle.getTags().get(0).getId());
-                }
-            }
+            addFormData(model, motorcycle);
+            return "motorcycle/form";
+        }
+        Map<String, String> dupErrors = service.validateDuplicate(motorcycle);
+        if (!dupErrors.isEmpty()) {
+            dupErrors.forEach((field, msgKey) -> bindingResult.rejectValue(field, "Duplicate", messageHelper.getMessage(msgKey)));
             addFormData(model, motorcycle);
             return "motorcycle/form";
         }
