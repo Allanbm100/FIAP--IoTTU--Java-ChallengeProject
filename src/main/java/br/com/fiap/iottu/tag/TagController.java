@@ -36,6 +36,12 @@ public class TagController {
         if (bindingResult.hasErrors()) {
             return "tag/form";
         }
+        try {
+            service.validateDuplicate(tag);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("rfidCode", "DuplicateTag", messageHelper.getMessage("message.error.tag.duplicate"));
+            return "tag/form";
+        }
         service.save(tag);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.created"));
         return "redirect:/tags";
@@ -53,6 +59,12 @@ public class TagController {
             return "tag/form";
         }
         tag.setId(id);
+        try {
+            service.validateDuplicate(tag);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("rfidCode", "DuplicateTag", messageHelper.getMessage("message.error.tag.duplicate"));
+            return "tag/form";
+        }
         service.save(tag);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.updated"));
         return "redirect:/tags";
@@ -60,8 +72,12 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.deleted"));
+        try {
+            service.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.tag.deleted"));
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.tag.deleteHasMotorcycles"));
+        }
         return "redirect:/tags";
     }
 }
