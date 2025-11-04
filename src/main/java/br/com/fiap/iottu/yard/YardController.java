@@ -54,6 +54,13 @@ public class YardController {
             User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
             yard.setUser(user);
         }
+        try {
+            service.validateDuplicate(yard);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("zipCode", "DuplicateYard", messageHelper.getMessage("message.error.yard.duplicate"));
+            model.addAttribute("users", userService.findAll());
+            return "yard/form";
+        }
         service.save(yard);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.created"));
         return "redirect:/yards";
@@ -77,6 +84,13 @@ public class YardController {
             User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
             yard.setUser(user);
         }
+        try {
+            service.validateDuplicate(yard);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("zipCode", "DuplicateYard", messageHelper.getMessage("message.error.yard.duplicate"));
+            model.addAttribute("users", userService.findAll());
+            return "yard/form";
+        }
         service.save(yard);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.updated"));
         return "redirect:/yards";
@@ -84,17 +98,22 @@ public class YardController {
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        service.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.deleted"));
+        try {
+            service.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.yard.deleted"));
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("failureMessage", messageHelper.getMessage("message.error.yard.deleteHasMotorcycles"));
+        }
         return "redirect:/yards";
     }
-
     @GetMapping("/{id}/map")
     public String showYardMap(@PathVariable Integer id, Model model) {
         Yard yard = service.findById(id).orElseThrow(() -> new IllegalArgumentException("{message.error.yard.invalid}" + id));
         YardMapDTO mapData = service.prepareYardMapData(id);
         model.addAttribute("yard", yard);
         model.addAttribute("mapData", mapData);
+        boolean canShowMap = mapData.getAntennas() != null && mapData.getAntennas().size() >= 3;
+        model.addAttribute("canShowMap", canShowMap);
 
         return "yard/map";
     }

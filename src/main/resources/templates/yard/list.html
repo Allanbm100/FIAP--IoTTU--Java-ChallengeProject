@@ -34,7 +34,7 @@
                     <a th:href="@{/yards/edit/{id}(id=${yard.id})}" class="btn btn-secondary btn-small" th:text="#{yard.list.button.edit}">Editar</a>
                     <form th:action="@{/yards/{id}(id=${yard.id})}" method="post" style="display:inline;">
                         <input type="hidden" name="_method" value="delete" />
-                        <button type="submit" class="btn btn-secondary btn-small" th:text="#{yard.list.button.delete}" onclick="return confirm('#{yard.list.confirm.delete}')">Excluir</button>
+                        <button type="submit" class="btn btn-secondary" th:text="#{yard.list.button.delete}" th:onclick="'return confirm(\'' + #{yard.list.confirm.delete} + '\');'">Excluir</button>
                     </form>
                 </td>
             </tr>

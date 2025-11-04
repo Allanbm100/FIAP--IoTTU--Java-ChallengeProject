@@ -10,7 +10,7 @@
         <a th:href="@{/yards}" class="btn btn-secondary" th:text="#{yard.map.button.backToList}">Voltar para a Lista</a>
     </div>
 
-    <div th:if="${mapData.outOfBoundsMotorcycles != null && !mapData.outOfBoundsMotorcycles.isEmpty()}" class="alert alert-danger" style="margin: 20px auto; max-width: 800px;">
+    <div th:if="${canShowMap and mapData.outOfBoundsMotorcycles != null and !mapData.outOfBoundsMotorcycles.isEmpty()}" class="alert alert-danger" style="margin: 20px auto; max-width: 800px;">
         <h4 th:text="#{yard.map.alert.outOfBounds.header}">Atenção: Motos Fora dos Limites do Pátio</h4>
         <p th:text="#{yard.map.alert.outOfBounds.message}">As seguintes motos estão a reportar uma localização fora da área delimitada pelas antenas:</p>
         <table class="table table-sm">
@@ -30,25 +30,29 @@
     </div>
 
     <div class="yard-map-container">
-        <div class="yard-map"
-             th:if="${mapData.mapWidth > 0}"
-             th:style="'width:' + ${mapData.mapWidth} + 'px; height:' + ${mapData.mapHeight} + 'px;'">
+        <div th:if="${canShowMap}">
+            <div class="yard-map"
+                 th:if="${mapData.mapWidth > 0}"
+                 th:style="'width:' + ${mapData.mapWidth} + 'px; height:' + ${mapData.mapHeight} + 'px;'">
 
-            <div th:each="drawable : ${mapData.antennas}"
-                 class="antenna"
-                 th:attr="data-label=${drawable.antenna.code}"
-                 th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
+                <div th:each="drawable : ${mapData.antennas}"
+                     class="antenna"
+                     th:attr="data-label=${drawable.antenna.code}"
+                     th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
+                </div>
+
+                <div th:each="drawable : ${mapData.motorcycles}"
+                     class="motorcycle"
+                     th:attr="data-label=${drawable.motorcycle.licensePlate}"
+                     th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
+                </div>
+
             </div>
-
-            <div th:each="drawable : ${mapData.motorcycles}"
-                 class="motorcycle"
-                 th:attr="data-label=${drawable.motorcycle.licensePlate}"
-                 th:style="'top:' + ${drawable.y} + 'px; left:' + ${drawable.x} + 'px;'">
-            </div>
-
         </div>
-        <div th:if="${mapData.mapWidth == 0}" class="alert alert-warning" th:text="#{yard.map.warning.noAntennas}">
-            Não há antenas com coordenadas definidas para este pátio para desenhar o mapa.
+
+        <div th:if="${!canShowMap}" class="alert alert-warning">
+            <h4 th:text="#{yard.map.warning.minimumAntennas.header}">Mapa indisponível</h4>
+            <p th:text="#{yard.map.warning.minimumAntennas.message}">É necessário cadastrar pelo menos 3 antenas com coordenadas para habilitar o mapa do pátio.</p>
         </div>
     </div>
 
