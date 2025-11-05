@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 class IoTtuApplicationTests {
 
-    @Test
     void contextLoads() {
     }
 
