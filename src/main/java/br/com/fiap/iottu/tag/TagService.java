@@ -17,6 +17,10 @@ public class TagService {
     public List<Tag> findAll() {
         return repository.findAll();
     }
+    
+    public List<Tag> findByUserId(Integer userId) {
+        return repository.findByUserId(userId);
+    }
 
     public Optional<Tag> findById(Integer id) {
         return repository.findById(id);
@@ -29,6 +33,10 @@ public class TagService {
 
     @Transactional
     public void deleteById(Integer id) {
+        Tag tag = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("{service.tag.error.notFoundById}" + id));
+        if (tag.getMotorcycles() != null && !tag.getMotorcycles().isEmpty()) {
+            throw new IllegalStateException("{message.error.tag.deleteHasMotorcycles}" + id);
+        }
         repository.deleteById(id);
     }
 
@@ -40,7 +48,6 @@ public class TagService {
     public Tag findOrCreateTag(String rfidCode, String wifiSsid, Double latitude, Double longitude) {
         Optional<Tag> existingTag = repository.findByRfidCode(rfidCode);
         Tag tag;
-
         if (existingTag.isPresent()) {
             tag = existingTag.get();
         } else {
@@ -55,5 +62,17 @@ public class TagService {
             tag.setLongitude(BigDecimal.valueOf(longitude));
         }
         return repository.save(tag);
+    }
+
+    public void validateDuplicate(Tag tag) {
+        String rfid = tag.getRfidCode() != null ? tag.getRfidCode().trim() : null;
+        if (rfid == null) return;
+        Optional<Tag> existing = repository.findByRfidCode(rfid);
+        if (existing.isPresent()) {
+            Tag found = existing.get();
+            if (tag.getId() == null || !found.getId().equals(tag.getId())) {
+                throw new IllegalArgumentException("{service.tag.error.duplicate}");
+            }
+        }
     }
 }

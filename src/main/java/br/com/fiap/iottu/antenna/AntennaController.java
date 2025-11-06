@@ -42,6 +42,21 @@ public class AntennaController {
             model.addAttribute("yards", yardService.findAll());
             return "antenna/form";
         }
+        try {
+            service.validateDuplicate(antenna);
+        } catch (IllegalArgumentException e) {
+            String key = e.getMessage();
+            if (key != null && key.contains("duplicateCode")) {
+                bindingResult.rejectValue("code", "DuplicateAntennaCode", messageHelper.getMessage("service.antenna.error.duplicateCode"));
+            } else if (key != null && key.contains("duplicateCoordinates")) {
+                bindingResult.rejectValue("latitude", "DuplicateAntennaCoordinates", messageHelper.getMessage("service.antenna.error.duplicateCoordinates"));
+                bindingResult.rejectValue("longitude", "DuplicateAntennaCoordinates", messageHelper.getMessage("service.antenna.error.duplicateCoordinates"));
+            } else {
+                bindingResult.reject("AntennaError", messageHelper.getMessage("service.antenna.error.processing"));
+            }
+            model.addAttribute("yards", yardService.findAll());
+            return "antenna/form";
+        }
         service.save(antenna);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.antenna.created"));
         return "redirect:/antennas";
@@ -61,6 +76,21 @@ public class AntennaController {
             return "antenna/form";
         }
         antenna.setId(id);
+        try {
+            service.validateDuplicate(antenna);
+        } catch (IllegalArgumentException e) {
+            String key = e.getMessage();
+            if (key != null && key.contains("duplicateCode")) {
+                bindingResult.rejectValue("code", "DuplicateAntennaCode", messageHelper.getMessage("service.antenna.error.duplicateCode"));
+            } else if (key != null && key.contains("duplicateCoordinates")) {
+                bindingResult.rejectValue("latitude", "DuplicateAntennaCoordinates", messageHelper.getMessage("service.antenna.error.duplicateCoordinates"));
+                bindingResult.rejectValue("longitude", "DuplicateAntennaCoordinates", messageHelper.getMessage("service.antenna.error.duplicateCoordinates"));
+            } else {
+                bindingResult.reject("AntennaError", messageHelper.getMessage("service.antenna.error.processing"));
+            }
+            model.addAttribute("yards", yardService.findAll());
+            return "antenna/form";
+        }
         service.save(antenna);
         redirectAttributes.addFlashAttribute("successMessage", messageHelper.getMessage("message.success.antenna.updated"));
         return "redirect:/antennas";

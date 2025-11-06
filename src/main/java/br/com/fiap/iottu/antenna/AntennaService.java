@@ -26,6 +26,10 @@ public class AntennaService {
     public List<Antenna> findAll() {
         return repository.findAll();
     }
+    
+    public List<Antenna> findByUserId(Integer userId) {
+        return repository.findByYardUserId(userId);
+    }
 
     public Optional<Antenna> findById(Integer id) {
         return repository.findById(id);
@@ -39,6 +43,31 @@ public class AntennaService {
         repository.save(antenna);
     }
 
+    public void validateDuplicate(Antenna antenna) {
+        if (antenna.getYard() == null) return;
+
+        Integer yardId = antenna.getYard().getId();
+        if (yardId == null) return;
+
+        String code = antenna.getCode() != null ? antenna.getCode().trim() : null;
+        if (code != null) {
+            Optional<Antenna> existing = repository.findByCodeAndYardId(code, yardId);
+            if (existing.isPresent() && (antenna.getId() == null || !existing.get().getId().equals(antenna.getId()))) {
+                throw new IllegalArgumentException("{service.antenna.error.duplicateCode}");
+            }
+        }
+
+        java.math.BigDecimal lat = antenna.getLatitude();
+        java.math.BigDecimal lon = antenna.getLongitude();
+        if (lat != null && lon != null) {
+            List<Antenna> matches = repository.findAllByLatitudeAndLongitudeAndYardId(lat, lon, yardId);
+            boolean duplicate = matches.stream().anyMatch(a -> antenna.getId() == null || !a.getId().equals(antenna.getId()));
+            if (duplicate) {
+                throw new IllegalArgumentException("{service.antenna.error.duplicateCoordinates}");
+            }
+        }
+    }
+
     public void deleteById(Integer id) {
         repository.deleteById(id);
     }
@@ -48,7 +77,7 @@ public class AntennaService {
             try {
                 Optional<Yard> yardOptional = yardService.findById(dto.getIdPatio());
                 if (yardOptional.isEmpty()) {
-                    log.warn("{service.antenna.warn.yardNotFound}", dto.getIdPatio(), dto.getCodigoAntena());
+                    log.warn("Yard with ID {} not found for antenna {}. Antenna will not be processed.", dto.getIdPatio(), dto.getCodigoAntena());
                     continue;
                 }
                 Yard yard = yardOptional.get();
@@ -62,9 +91,9 @@ public class AntennaService {
                 antenna.setLongitude(BigDecimal.valueOf(dto.getLongitudeAntena()));
 
                 repository.save(antenna);
-                log.info("{service.antenna.info.saved}", dto.getCodigoAntena());
+                log.info("Antenna {} processed and saved.", dto.getCodigoAntena());
             } catch (Exception e) {
-                log.error("{service.antenna.error.processing}", dto.getCodigoAntena(), e.getMessage(), e);
+                log.error("Error processing antenna {}: {}", dto.getCodigoAntena(), e.getMessage(), e);
             }
         }
     }

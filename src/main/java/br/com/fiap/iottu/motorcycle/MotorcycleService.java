@@ -11,12 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.validation.ConstraintViolationException;
+import jakarta.persistence.RollbackException;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class MotorcycleService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MotorcycleService.class);
 
     @Autowired
     private MotorcycleRepository repository;
@@ -33,6 +44,10 @@ public class MotorcycleService {
     public List<Motorcycle> findAll() {
         return repository.findAll();
     }
+    
+    public List<Motorcycle> findByUserId(Integer userId) {
+        return repository.findByYardUserId(userId);
+    }
 
     public Optional<Motorcycle> findById(Integer id) {
         return repository.findById(id);
@@ -46,12 +61,44 @@ public class MotorcycleService {
         repository.save(motorcycle);
     }
 
-    public void deleteById(Integer id) {
-        repository.deleteById(id);
+    public Map<String, String> validateDuplicate(Motorcycle motorcycle) {
+        Map<String, String> errors = new HashMap<>();
+
+        String chassi = motorcycle.getChassi() != null ? motorcycle.getChassi().trim() : null;
+        if (chassi != null && !chassi.isBlank()) {
+            List<Motorcycle> matches = repository.findAllByChassi(chassi);
+            boolean duplicate = matches.stream().anyMatch(m -> motorcycle.getId() == null || !m.getId().equals(motorcycle.getId()));
+            if (duplicate) {
+                errors.put("chassi", "service.motorcycle.error.duplicateChassi");
+            }
+        }
+
+        String plate = motorcycle.getLicensePlate() != null ? motorcycle.getLicensePlate().trim() : null;
+        if (plate != null && !plate.isBlank()) {
+            List<Motorcycle> matches = repository.findAllByLicensePlate(plate);
+            boolean duplicate = matches.stream().anyMatch(m -> motorcycle.getId() == null || !m.getId().equals(motorcycle.getId()));
+            if (duplicate) {
+                errors.put("licensePlate", "service.motorcycle.error.duplicateLicensePlate");
+            }
+        }
+
+        String engine = motorcycle.getEngineNumber() != null ? motorcycle.getEngineNumber().trim() : null;
+        if (engine != null && !engine.isBlank()) {
+            List<Motorcycle> matches = repository.findAllByEngineNumber(engine);
+            boolean duplicate = matches.stream().anyMatch(m -> motorcycle.getId() == null || !m.getId().equals(motorcycle.getId()));
+            if (duplicate) {
+                errors.put("engineNumber", "service.motorcycle.error.duplicateEngineNumber");
+            }
+        }
+
+        return errors;
     }
 
     @Transactional
     public Motorcycle saveOrUpdateWithTag(Motorcycle motorcycle, Integer selectedTagId) {
+        if (selectedTagId == null) {
+            throw new IllegalArgumentException("{validation.motorcycle.selectedTag.notNull}");
+        }
         Optional<Tag> tagOptional = tagService.findById(selectedTagId);
 
         if (tagOptional.isEmpty()) {
@@ -59,32 +106,45 @@ public class MotorcycleService {
         }
         Tag newTag = tagOptional.get();
 
-        if (newTag.getMotorcycles() != null && !newTag.getMotorcycles().isEmpty()) {
-            boolean isAssignedToThisMotorcycle = motorcycle.getId() != null && newTag.getMotorcycles().contains(motorcycle);
+        logger.debug("Saving motorcycle - id: {}, selectedTagId: {}", motorcycle.getId(), selectedTagId);
 
-            if (!isAssignedToThisMotorcycle) {
-                throw new IllegalArgumentException("{service.motorcycle.error.tagAlreadyAssigned}");
-            }
-        }
+         if (newTag.getMotorcycles() != null && !newTag.getMotorcycles().isEmpty()) {
+             boolean isAssignedToThisMotorcycle = motorcycle.getId() != null &&
+                     newTag.getMotorcycles().stream()
+                             .anyMatch(m -> Objects.equals(m.getId(), motorcycle.getId()));
 
-        if (motorcycle.getId() != null) {
-            Optional<Motorcycle> existingMotorcycleOptional = repository.findById(motorcycle.getId());
-            if (existingMotorcycleOptional.isPresent()) {
-                Motorcycle existingMotorcycle = existingMotorcycleOptional.get();
+             if (!isAssignedToThisMotorcycle) {
+                 throw new IllegalArgumentException("{service.motorcycle.error.tagAlreadyAssigned}");
+             }
+         }
 
-                if (existingMotorcycle.getTags() != null && !existingMotorcycle.getTags().isEmpty()) {
-                    Tag oldTag = existingMotorcycle.getTags().get(0);
+         if (motorcycle.getId() != null) {
+             Optional<Motorcycle> existingMotorcycleOptional = repository.findById(motorcycle.getId());
+             if (existingMotorcycleOptional.isPresent()) {
+                 Motorcycle existingMotorcycle = existingMotorcycleOptional.get();
 
-                    if (!oldTag.equals(newTag)) {
-                        oldTag.getMotorcycles().remove(existingMotorcycle);
-                        tagService.save(oldTag);
-                    }
-                }
-            }
-        }
+                 if (existingMotorcycle.getTags() != null && !existingMotorcycle.getTags().isEmpty()) {
+                     Tag oldTag = existingMotorcycle.getTags().get(0);
+
+                     logger.debug("Existing motorcycle {} has oldTag id: {}", existingMotorcycle.getId(), oldTag.getId());
+                     if (!Objects.equals(oldTag.getId(), newTag.getId())) {
+                         logger.debug("Old tag id {} differs from new tag id {}", oldTag.getId(), newTag.getId());
+                     }
+                 }
+             }
+         }
         motorcycle.setTags(new ArrayList<>());
         motorcycle.getTags().add(newTag);
-        return repository.save(motorcycle);
+        logger.debug("About to persist motorcycle (id before save): {}", motorcycle.getId());
+        Motorcycle saved = repository.save(motorcycle);
+        logger.debug("Motorcycle persisted (id after save): {}", saved.getId());
+        try {
+            repository.flush();
+        } catch (ConstraintViolationException | org.springframework.dao.DataIntegrityViolationException | RollbackException e) {
+            logger.error("Falha ao salvar Motorcycle (flush): {}", e.getMessage(), e);
+            throw new IllegalStateException("Falha ao persistir a motocicleta: " + e.getMessage(), e);
+        }
+        return saved;
     }
 
     @Transactional
@@ -130,9 +190,13 @@ public class MotorcycleService {
 
         if (motorcycleToDelete.getTags() != null  && !motorcycleToDelete.getTags().isEmpty()) {
             Tag associatedTag = motorcycleToDelete.getTags().get(0);
-            associatedTag.getMotorcycles().remove(motorcycleToDelete);
-            tagService.save(associatedTag);
         }
         repository.deleteById(id);
+        try {
+            repository.flush();
+        } catch (ConstraintViolationException | org.springframework.dao.DataIntegrityViolationException | RollbackException e) {
+            logger.error("Falha ao deletar Motorcycle (flush): {}", e.getMessage(), e);
+            throw new IllegalStateException("Falha ao deletar a motocicleta: " + e.getMessage(), e);
+        }
     }
 }
