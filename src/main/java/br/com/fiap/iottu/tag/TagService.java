@@ -22,6 +22,10 @@ public class TagService {
         return repository.findByUserId(userId);
     }
 
+    public List<Tag> findOrphanAndUserTags(Integer userId) {
+        return repository.findOrphanAndUserTags(userId);
+    }
+
     public Optional<Tag> findById(Integer id) {
         return repository.findById(id);
     }
@@ -33,10 +37,12 @@ public class TagService {
 
     @Transactional
     public void deleteById(Integer id) {
-        Tag tag = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("{service.tag.error.notFoundById}" + id));
-        if (tag.getMotorcycles() != null && !tag.getMotorcycles().isEmpty()) {
-            throw new IllegalStateException("{message.error.tag.deleteHasMotorcycles}" + id);
+        repository.findById(id).orElseThrow(() -> new IllegalArgumentException("{service.tag.error.notFoundById}" + id));
+        
+        if (repository.isTagInUse(id)) {
+            throw new IllegalStateException("{message.error.tag.deleteHasMotorcycle}" + id);
         }
+        
         repository.deleteById(id);
     }
 

@@ -1,8 +1,12 @@
 package br.com.fiap.iottu.tag;
 
 import br.com.fiap.iottu.helper.MessageHelper;
+import br.com.fiap.iottu.user.User;
+import br.com.fiap.iottu.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,11 +21,19 @@ public class TagController {
     private TagService service;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MessageHelper messageHelper;
 
     @GetMapping
-    public String listTags(Model model) {
-        model.addAttribute("tags", service.findAll());
+    public String listTags(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            model.addAttribute("tags", service.findOrphanAndUserTags(user.getId()));
+        } else {
+            model.addAttribute("tags", service.findAll());
+        }
         return "tag/list";
     }
 
