@@ -41,59 +41,47 @@ public class YardRestController {
 
     @GetMapping("/{id}/map")
     public YardMapDTO getYardMap(@PathVariable Integer id) {
-        try {
-            return yardService.prepareYardMapData(id);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return yardService.prepareYardMapData(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Yard create(@Valid @RequestBody YardRequestDTO dto) {
-        try {
-            Yard yard = new Yard();
-            
-            User user = userService.findById(dto.getUserId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado"));
-            yard.setUser(user);
-            
-            yard.setZipCode(dto.getZipCode());
-            yard.setNumber(dto.getNumber());
-            yard.setCity(dto.getCity());
-            yard.setState(dto.getState());
-            yard.setCapacity(dto.getCapacity());
-            
-            yardService.validateDuplicate(yard);
-            yardService.save(yard);
-            return yard;
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        Yard yard = new Yard();
+        
+        User user = userService.findById(dto.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado"));
+        yard.setUser(user);
+        
+        yard.setZipCode(dto.getZipCode());
+        yard.setNumber(dto.getNumber());
+        yard.setCity(dto.getCity());
+        yard.setState(dto.getState());
+        yard.setCapacity(dto.getCapacity());
+        
+        yardService.validateDuplicate(yard);
+        yardService.save(yard);
+        return yard;
     }
 
     @PutMapping("/{id}")
     public Yard update(@PathVariable Integer id, @Valid @RequestBody YardRequestDTO dto) {
-        try {
-            Yard yard = new Yard();
-            yard.setId(id);
-            
-            User user = userService.findById(dto.getUserId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado"));
-            yard.setUser(user);
-            
-            yard.setZipCode(dto.getZipCode());
-            yard.setNumber(dto.getNumber());
-            yard.setCity(dto.getCity());
-            yard.setState(dto.getState());
-            yard.setCapacity(dto.getCapacity());
-            
-            yardService.validateDuplicate(yard);
-            yardService.save(yard);
-            return yard;
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        Yard yard = new Yard();
+        yard.setId(id);
+        
+        User user = userService.findById(dto.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado"));
+        yard.setUser(user);
+        
+        yard.setZipCode(dto.getZipCode());
+        yard.setNumber(dto.getNumber());
+        yard.setCity(dto.getCity());
+        yard.setState(dto.getState());
+        yard.setCapacity(dto.getCapacity());
+        
+        yardService.validateDuplicate(yard);
+        yardService.save(yard);
+        return yard;
     }
 
     @DeleteMapping("/{id}")

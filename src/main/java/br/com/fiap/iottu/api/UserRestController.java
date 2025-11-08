@@ -44,11 +44,7 @@ public class UserRestController {
     @PutMapping("/{id}")
     public User update(@PathVariable Integer id, @Valid @RequestBody User user) {
         userService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado, id=" + id));
-        try {
-            return userService.updateWithPasswordPreservation(id, user);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return userService.updateWithPasswordPreservation(id, user);
     }
 
     @DeleteMapping("/{id}")
@@ -59,10 +55,6 @@ public class UserRestController {
 
     @PostMapping("/{id}/promote")
     public User promote(@PathVariable Integer id) {
-        try {
-            return userService.promoteToAdmin(id);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return userService.promoteToAdmin(id);
     }
 }

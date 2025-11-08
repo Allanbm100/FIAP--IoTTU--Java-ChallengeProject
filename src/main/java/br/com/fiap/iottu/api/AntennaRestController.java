@@ -45,47 +45,40 @@ public class AntennaRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @CacheEvict(allEntries = true)
     public Antenna create(@Valid @RequestBody AntennaRequestDTO dto) {
-        try {
-            Antenna antenna = new Antenna();
-            
-            Yard yard = yardService.findById(dto.getYardId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pátio não encontrado"));
-            antenna.setYard(yard);
-            
-            antenna.setCode(dto.getCode());
-            antenna.setLatitude(dto.getLatitude());
-            antenna.setLongitude(dto.getLongitude());
-            
-            antennaService.validateDuplicate(antenna);
-            antennaService.save(antenna);
-            return antenna;
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        Antenna antenna = new Antenna();
+        
+        Yard yard = yardService.findById(dto.getYardId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pátio não encontrado"));
+        antenna.setYard(yard);
+        
+        antenna.setCode(dto.getCode());
+        antenna.setLatitude(dto.getLatitude());
+        antenna.setLongitude(dto.getLongitude());
+        
+        antennaService.validateDuplicate(antenna);
+        antennaService.save(antenna);
+        return antenna;
     }
 
     @PutMapping("/{id}")
     @CacheEvict(allEntries = true)
     public Antenna update(@PathVariable Integer id, @Valid @RequestBody AntennaRequestDTO dto) {
         antennaService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Antena não encontrada, id=" + id));
-        try {
-            Antenna antenna = new Antenna();
-            antenna.setId(id);
-            
-            Yard yard = yardService.findById(dto.getYardId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pátio não encontrado"));
-            antenna.setYard(yard);
-            
-            antenna.setCode(dto.getCode());
-            antenna.setLatitude(dto.getLatitude());
-            antenna.setLongitude(dto.getLongitude());
-            
-            antennaService.validateDuplicate(antenna);
-            antennaService.save(antenna);
-            return antenna;
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        
+        Antenna antenna = new Antenna();
+        antenna.setId(id);
+        
+        Yard yard = yardService.findById(dto.getYardId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pátio não encontrado"));
+        antenna.setYard(yard);
+        
+        antenna.setCode(dto.getCode());
+        antenna.setLatitude(dto.getLatitude());
+        antenna.setLongitude(dto.getLongitude());
+        
+        antennaService.validateDuplicate(antenna);
+        antennaService.save(antenna);
+        return antenna;
     }
 
     @DeleteMapping("/{id}")
