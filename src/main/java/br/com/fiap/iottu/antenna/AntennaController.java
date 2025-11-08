@@ -1,9 +1,13 @@
 package br.com.fiap.iottu.antenna;
 
 import br.com.fiap.iottu.helper.MessageHelper;
+import br.com.fiap.iottu.user.User;
+import br.com.fiap.iottu.user.UserService;
 import br.com.fiap.iottu.yard.YardService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,11 +25,19 @@ public class AntennaController {
     private YardService yardService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MessageHelper messageHelper;
 
     @GetMapping
-    public String listAntennas(Model model) {
-        model.addAttribute("antennas", service.findAll());
+    public String listAntennas(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            model.addAttribute("antennas", service.findByUserId(user.getId()));
+        } else {
+            model.addAttribute("antennas", service.findAll());
+        }
         return "antenna/list";
     }
 

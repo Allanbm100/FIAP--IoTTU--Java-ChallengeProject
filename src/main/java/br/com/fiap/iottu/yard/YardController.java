@@ -27,8 +27,13 @@ public class YardController {
     private MessageHelper messageHelper;
 
     @GetMapping
-    public String listYards(Model model) {
-        model.addAttribute("yards", service.findAll());
+    public String listYards(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            User user = userService.findByEmail(userDetails.getUsername()).orElseThrow();
+            model.addAttribute("yards", service.findByUserId(user.getId()));
+        } else {
+            model.addAttribute("yards", service.findAll());
+        }
         return "yard/list";
     }
 
