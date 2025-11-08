@@ -185,12 +185,9 @@ public class MotorcycleService {
 
     @Transactional
     public void deleteByIdWithTagUnbinding(Integer id) {
-        Motorcycle motorcycleToDelete = findById(id)
+        findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("{service.motorcycle.error.notFoundById}" + id));
 
-        if (motorcycleToDelete.getTags() != null  && !motorcycleToDelete.getTags().isEmpty()) {
-            Tag associatedTag = motorcycleToDelete.getTags().get(0);
-        }
         repository.deleteById(id);
         try {
             repository.flush();
